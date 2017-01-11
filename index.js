@@ -1,3 +1,7 @@
-/**
- * Created by ruben on 11.01.17.
- */
+'use strict';
+
+const toDOM = require('./lib/toDom');
+
+module.exports = {
+  toDOM,
+};
