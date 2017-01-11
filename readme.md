@@ -24,4 +24,6 @@ const json = {
 vcms.toDOM(json);
 // Output: <div class="myclass"><h1>headline</h1>a text node</div>
 ```
+## Schema
 
+The Objects need to conform to the JSON Schema in `./schema/visualcms.json`
