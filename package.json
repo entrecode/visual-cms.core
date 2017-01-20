@@ -6,17 +6,18 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {
-
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
-    "url": "ssh://git@stash.entrecode.de:7999/ecvcm/visual-cms.core.git"
+    "url": "https://github.com/entrecode/visual-cms.core"
   },
   "author": "entrecode GmbH",
-  "private": true,
+  "license": "ISC",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   },
   "dependencies": {
+    "min-document": "^2.19.0"
   }
 }
