@@ -21,8 +21,12 @@ const json = {
   ],
 };
 
-vcms.toDOM(json);
+const html = vcms.toDOM(json);
 // Output: <div class="myclass"><h1>headline</h1>a text node</div>
+
+vcms.toJSON(html);
+// Output: json equal to the value of `json` above
+
 ```
 ## Schema
 

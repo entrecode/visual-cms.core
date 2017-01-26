@@ -1,14 +1,13 @@
-'use strict';
 const chai = require('chai');
 
 const expect = chai.expect;
 
-describe('toDom', () => {
+describe('toJSON', () => {
   let toJSON;
-  let toDOM;
+  let toDom;
   before(() => {
     toJSON = require('../lib/toJSON');
-    toDOM = require('../lib/toDom');
+    toDom = require('../lib/toDom');
   });
   it('default case', () => {
     const testJSON = {
@@ -82,26 +81,35 @@ describe('toDom', () => {
  <blockquote>TEST</blockquote>
  </div>
  </div>`;
-    const result = toDOM(testJSON);
-    expect(result).to.eql(testHTML);
-    const rejson = toJSON(result);
-    expect(rejson).to.deep.eql(testJSON);
+    const result = toJSON(testHTML);
+    expect(result).to.deep.eql(testJSON);
+    const rehtml = toDom(result);
+    expect(rehtml).to.eql(testHTML);
   });
   it('mixed inner html and child elements', () => {
-    const testJSON = {
+    const testJSON = [{
       "type": "div",
       "content": [
         {
           "type": "h1",
           "content": ["headline"]
         },
-        "dlskfg",
+        "dlskfg"
         ]
-    };
-    const testHTML = `<div><h1>headline</h1>dlskfg</div>`;
-    const result = toDOM(testJSON);
-    expect(result).to.eql(testHTML);
-    const rejson = toJSON(result);
-    expect(rejson).to.deep.eql(testJSON);
+    },
+      "\n",
+      {
+        "type": "p",
+        "content": [
+          "paragraph"
+        ]
+      }
+
+    ];
+    const testHTML = `<div><h1>headline</h1>dlskfg</div>\n<p>paragraph</p>\n`;
+    const result = toJSON(testHTML);
+    expect(result).to.deep.eql(testJSON);
+    const rehtml = toDom(result);
+    expect(rehtml+'\n').to.eql(testHTML); // newline at the end is ignored
   });
 });
