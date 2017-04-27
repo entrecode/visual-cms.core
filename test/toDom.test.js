@@ -104,4 +104,19 @@ describe('toDom', () => {
     const rejson = toJSON(result);
     expect(rejson).to.deep.eql(testJSON);
   });
+  it('undefined', (done) => {
+    const result = toDOM(undefined);
+    expect(result).to.eql('')
+    done();
+  });
+  it('null', (done) => {
+    const result = toDOM(null);
+    expect(result).to.eql('')
+    done();
+  });
+  it('empty object', (done) => {
+    const result = toDOM({});
+    expect(result).to.eql('')
+    done();
+  });
 });
