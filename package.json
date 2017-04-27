@@ -1,6 +1,6 @@
 {
   "name": "visual-cms.core",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Visual CMS Core Library. By entrecode.",
   "main": "index.js",
   "directories": {

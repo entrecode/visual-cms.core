@@ -13,7 +13,6 @@ describe('toJSON', () => {
     const testJSON = {
       "type": "div",
       "content": [
-        "\n ",
         {
           "type": "h2",
           "content": [
@@ -23,64 +22,56 @@ describe('toJSON', () => {
             "style": "color: red;"
           }
         },
-        "\n ",
         {
           "type": "p",
           "content": [
             "asklfj sadklfjö asföl alföka flkas dfklöask fdlöasfk ölsak fsafasflkdlf sklöfk sdlf ksdlöf sdlf"
           ]
         },
-        "\n ",
         {
           "type": "h3",
           "content": [
             "test"
           ]
         },
-        "\n ",
         {
           "type": "h4",
           "content": [
             "test"
           ]
         },
-        "\n ",
         {
           "type": "img",
           "attributes": {
             "src": "http://p-hold.com/200"
           }
         },
-        "\n ",
         {
           "type": "div",
           "content": [
-            "\n ",
             {
               "type": "blockquote",
               "content": [
                 "TEST"
               ]
-            },
-            "\n "
+            }
           ]
-        },
-        "\n "
+        }
       ],
       "attributes": {
         "class": "content"
       }
     };
     const testHTML = `<div class="content">
- <h2 style="color: red;">test</h2>
- <p>asklfj sadklfjö asföl alföka flkas dfklöask fdlöasfk ölsak fsafasflkdlf sklöfk sdlf ksdlöf sdlf</p>
- <h3>test</h3>
- <h4>test</h4>
- <img src="http://p-hold.com/200" />
- <div>
- <blockquote>TEST</blockquote>
- </div>
- </div>`;
+<h2 style="color: red;">test</h2>
+<p>asklfj sadklfjö asföl alföka flkas dfklöask fdlöasfk ölsak fsafasflkdlf sklöfk sdlf ksdlöf sdlf</p>
+<h3>test</h3>
+<h4>test</h4>
+<img src="http://p-hold.com/200" />
+<div>
+<blockquote>TEST</blockquote>
+</div>
+</div>`.replace(/\n|\r/g, '');
     const result = toJSON(testHTML);
     expect(result).to.deep.eql(testJSON);
     const rehtml = toDom(result);
@@ -97,7 +88,6 @@ describe('toJSON', () => {
         "dlskfg"
         ]
     },
-      "\n",
       {
         "type": "p",
         "content": [
@@ -106,7 +96,7 @@ describe('toJSON', () => {
       }
 
     ];
-    const testHTML = `<div><h1>headline</h1>dlskfg</div>\n<p>paragraph</p>\n`;
+    const testHTML = `<div><h1>headline</h1>dlskfg</div><p>paragraph</p>\n`;
     const result = toJSON(testHTML);
     expect(result).to.deep.eql(testJSON);
     const rehtml = toDom(result);
