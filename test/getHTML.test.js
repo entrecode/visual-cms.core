@@ -96,4 +96,36 @@ describe('parseJSON', () => {
     expect(html.toString()).to.eql(`<ul><li>Lists can contain list elements which become <strong>li tags</strong></li><ol><li>or other lists for nesting</li></ol></ul>`)
     done();
   });
+  it('grid custom module', (done) => {
+    const json = {
+      type: 'grid',
+      settings: {
+        columns: '4,8'
+      },
+      content: {
+        column0: [
+          {
+            type: 'paragraph',
+            content: [
+              'First ',
+              {
+                type: 'strong',
+                content: 'paragraph!'
+              }
+            ]
+          },
+          {
+            type: 'paragraph',
+            content: 'Second paragraph!'
+          }],
+        column1: {
+          type: 'paragraph',
+          content: 'just text'
+        }
+      }
+    };
+    const html = core.parse(json);
+    expect(html.toString()).to.eql(`<div class="grid"><div class="col-4"><p>First <strong>paragraph!</strong></p><p>Second paragraph!</p></div><div class="col-8"><p>just text</p></div></div>`);
+    done();
+  });
 })
