@@ -1,5 +1,6 @@
 const contentSymbol = Symbol('content');
 const supportedContentSymbol = Symbol('supportedContent');
+const settingsSymbol = Symbol('settings');
 
 const library = new Map();
 
@@ -12,22 +13,8 @@ function jsonToElement(json) {
   return new Class(json);
 }
 
-function addContent(content) {
-  let contentElements;
-  if (Array.isArray(content)) {
-    contentElements = content.map(contentPart => jsonToElement(contentPart));
-  } else {
-    contentElements = jsonToElement(content);
-  }
-  if (Array.isArray(contentElements)) {
-    return contentElements.filter(contentPart => this.supportsContent(contentPart));
-  } else {
-    return this.supportsContent(contentElements) ? contentElements : null;
-  }
-}
-
 class Element {
-  constructor({ content }) {
+  constructor({ content, settings }) {
     this[supportedContentSymbol] = new Set();
     let contentElements;
     if (Array.isArray(content)) {
@@ -40,6 +27,7 @@ class Element {
     } else {
       this[contentSymbol] = this.supportsContent(contentElements) ? contentElements : null;
     }
+    this[settingsSymbol] = Object.assign({}, settings);
   }
 
   get type() {
@@ -52,6 +40,10 @@ class Element {
 
   supportsContent(content) {
     return this.supportedContent.some(Class => content instanceof Class);
+  }
+
+  get settings() {
+    return this[settingsSymbol];
   }
 
   get content() {
@@ -111,8 +103,45 @@ class Strong extends PhrasingElement {
     return `<strong>${this.content}</strong>`;
   }
 }
+
+class FlowElement extends Element {
+
+}
+
+class ListElement extends Element {
+  get supportedContent() {
+    return [
+      PhrasingElement,
+      Text
+    ]
+  }
+
+  get template() {
+    return `<li>${this.content}</li>`;
+  }
+}
+
+class List extends FlowElement {
+  get supportedContent() {
+    return [
+      List,
+      ListElement
+    ];
+  }
+
+  get template() {
+    if (this.settings.ordered) {
+      return `<ol>${this.content}</ol>`;
+    } else {
+      return `<ul>${this.content}</ul>`;
+    }
+  }
+}
+
 library.set('text', Text);
 library.set('strong', Strong);
+library.set('list', List);
+library.set('listelement', ListElement);
 
 
 function parse(json) {
@@ -128,6 +157,8 @@ module.exports = {
   elements: {
     Text,
     Strong,
+    ListElement,
+    List,
   },
   parse,
 };
