@@ -128,4 +128,15 @@ describe('parseJSON', () => {
     expect(html.toString()).to.eql(`<div class="grid"><div class="col-4"><p>First <strong>paragraph!</strong></p><p>Second paragraph!</p></div><div class="col-8"><p>just text</p></div></div>`);
     done();
   });
+  it('settings schema error', (done) => {
+    const json = {
+      type: 'grid',
+      settings: {
+        columns: 'lol'
+      },
+      content: {}
+    };
+    expect(() => core.parse(json)).to.throw(Error);
+    done()
+  });
 })

@@ -1,7 +1,12 @@
+const tv4 = require('tv4');
+const tv4formats = require('tv4-formats');
+
+const validator = tv4.freshApi();
+validator.addFormat(tv4formats);
+
 const contentSymbol = Symbol('content');
 const supportedContentSymbol = Symbol('supportedContent');
 const settingsSymbol = Symbol('settings');
-
 const library = new Map();
 
 function jsonToElement(json) {
@@ -51,7 +56,13 @@ class Element {
         .map(key => ({ [key]: (contentElements[key]) })))
       );
     }
-    this[settingsSymbol] = Object.assign({}, settings);
+    if (settings) {
+      const validation = validator.validateResult(settings, this.settingsSchema);
+      if (!validation.valid) {
+        throw new Error(`invalid settings: ${JSON.stringify(validation)}`);
+      }
+      this[settingsSymbol] = Object.assign({}, settings);
+    }
   }
 
   get type() {
@@ -64,6 +75,13 @@ class Element {
 
   supportsContent(content) {
     return this.supportedContent.some(Class => content instanceof Class);
+  }
+
+  get settingsSchema() {
+    return {
+      type: 'object',
+      additionalProperties: false,
+    };
   }
 
   get settings() {
@@ -86,7 +104,7 @@ class Element {
         ...Object.keys(this[contentSymbol])
         .map((key) => {
           if (Array.isArray(this[contentSymbol][key])) {
-            return { [key]: this[contentSymbol][key].map(element => element.template).join('')};
+            return { [key]: this[contentSymbol][key].map(element => element.template).join('') };
           }
           return { [key]: this[contentSymbol][key].template }
         })
@@ -157,7 +175,6 @@ class ListElement extends Element {
       Text
     ]
   }
-
   get template() {
     return `<li>${this.content}</li>`;
   }
@@ -170,7 +187,18 @@ class List extends FlowElement {
       ListElement
     ];
   }
-
+  get settingsSchema() {
+    return {
+      type: 'object',
+      properties: {
+        ordered: {
+          type: 'boolean',
+        },
+      },
+      required: ['ordered'],
+      additionalProperties: false,
+    };
+  }
   get template() {
     if (this.settings.ordered) {
       return `<ol>${this.content}</ol>`;
@@ -189,6 +217,20 @@ class Grid extends Module {
     return [
       FlowElement
     ];
+  }
+
+  get settingsSchema() {
+    return {
+      type: 'object',
+      properties: {
+        columns: {
+          type: 'string',
+          pattern: '^[1-9][0-9]*(,[1-9][0-9]*)*$',
+        },
+      },
+      required: ['columns'],
+      additionalProperties: false,
+    };
   }
 
   get template() {
