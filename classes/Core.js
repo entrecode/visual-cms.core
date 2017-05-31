@@ -29,7 +29,7 @@ class Element {
     } else if (typeof content === 'object' && !('type' in content)) {
       contentElements = Object.assign(
         {},
-        ...Object.keys(content).map(key => {
+        ...Object.keys(content).map((key) => {
           if (Array.isArray(content[key])) {
             return { [key]: content[key].map(jsonToElement) };
           }
@@ -40,20 +40,20 @@ class Element {
       contentElements = jsonToElement(content);
     }
     if (Array.isArray(contentElements)) {
-      this[contentSymbol] = contentElements.filter(contentPart => this.supportsContent(contentPart));
+      this[contentSymbol] = contentElements.filter(cPart => this.supportsContent(cPart));
     } else if (contentElements instanceof Element) {
       this[contentSymbol] = this.supportsContent(contentElements) ? contentElements : null;
     } else {
       this[contentSymbol] = Object.assign(
         {},
-        ...(Object.keys(contentElements)
+        ...Object.keys(contentElements)
         .filter((key) => {
           if (Array.isArray(contentElements[key])) {
             return contentElements[key].every(elem => this.supportsContent(elem, key));
           }
           return this.supportsContent(contentElements[key], key);
         })
-        .map(key => ({ [key]: contentElements[key] })))
+        .map(key => ({ [key]: contentElements[key] }))
       );
     }
     if (settings) {
@@ -62,6 +62,8 @@ class Element {
         throw new Error(`invalid settings: ${JSON.stringify(validation)}`);
       }
       this[settingsSymbol] = Object.assign({}, settings);
+    } else {
+      this[settingsSymbol] = {};
     }
   }
 
@@ -110,12 +112,11 @@ class Element {
           if (Array.isArray(this[contentSymbol][key])) {
             return { [key]: this[contentSymbol][key].map(element => element.template).join('') };
           }
-          return { [key]: this[contentSymbol][key].template }
+          return { [key]: this[contentSymbol][key].template };
         })
       );
     }
     return this[contentSymbol].content;
-
   }
 
   get template() {
@@ -138,7 +139,41 @@ class Text extends Element {
   }
 }
 
-class PhrasingElement extends Element {
+class BaseElement extends Element {
+  get settingsSchema() {
+    return {
+      type: 'object',
+      properties: {
+        class: {
+          type: 'array',
+          items: {
+            type: 'string',
+            pattern: '^[a-zA-Z0-9\\-_]+$',
+          },
+        },
+      },
+      additionalProperties: false,
+    };
+  }
+
+  get classAttribute() {
+    if (this.classAttributeValue.length > 0) {
+      return ` class="${this.classAttributeValue}"`;
+    }
+    return '';
+  }
+
+  get classAttributeValue() {
+    const classArray = this.settings.class;
+    if (!classArray || !Array.isArray(classArray) || classArray.length === 0) {
+      return '';
+    }
+    return classArray.join(' ');
+  }
+
+}
+
+class PhrasingElement extends BaseElement {
 
 }
 
@@ -146,16 +181,16 @@ class Strong extends PhrasingElement {
   get supportedContent() {
     return [
       PhrasingElement,
-      Text
-    ]
+      Text,
+    ];
   }
 
   get template() {
-    return `<strong>${this.content}</strong>`;
+    return `<strong${this.classAttribute}>${this.content}</strong>`;
   }
 }
 
-class FlowElement extends Element {
+class FlowElement extends BaseElement {
 
 }
 
@@ -163,12 +198,12 @@ class Paragraph extends FlowElement {
   get supportedContent() {
     return [
       PhrasingElement,
-      Text
+      Text,
     ];
   }
 
   get template() {
-    return `<p>${this.content}</p>`;
+    return `<p${this.classAttribute}>${this.content}</p>`;
   }
 }
 
@@ -176,8 +211,8 @@ class ListElement extends Element {
   get supportedContent() {
     return [
       PhrasingElement,
-      Text
-    ]
+      Text,
+    ];
   }
 
   get template() {
@@ -189,7 +224,7 @@ class List extends FlowElement {
   get supportedContent() {
     return [
       List,
-      ListElement
+      ListElement,
     ];
   }
 
@@ -208,10 +243,9 @@ class List extends FlowElement {
 
   get template() {
     if (this.settings.ordered) {
-      return `<ol>${this.content}</ol>`;
-    } else {
-      return `<ul>${this.content}</ul>`;
+      return `<ol${this.classAttribute}>${this.content}</ol>`;
     }
+    return `<ul${this.classAttribute}>${this.content}</ul>`;
   }
 }
 
@@ -222,7 +256,7 @@ class Module extends Element {
 class Grid extends Module {
   get supportedContent() {
     return [
-      FlowElement
+      FlowElement,
     ];
   }
 

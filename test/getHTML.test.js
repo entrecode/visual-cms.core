@@ -57,6 +57,33 @@ describe('parseJSON', () => {
     expect(elements.map(e => e.toString()).join('')).to.eql('sdfsdfsdf <strong>strong</strong> sdfsdfsdf')
     done();
   });
+  it('paragraph with class', (done) => {
+    const json = [
+      'sdfsdfsdf ',
+      {
+        type: 'paragraph',
+        settings: {
+          class: ['class1', 'class2']
+        },
+        content: [
+          'text ',
+          {
+            type: 'strong',
+            settings: {
+              class: ['extrastrong'],
+            },
+            content: 'strong',
+          },
+        ],
+      },
+    ];
+    const elements = core.parse(json);
+    expect(elements).to.have.lengthOf(2);
+    expect(elements[0]).to.be.instanceof(core.elements.Text);
+    expect(elements[1]).to.be.instanceof(core.elements.Paragraph);
+    expect(elements.map(e => e.toString()).join('')).to.eql('sdfsdfsdf <p class="class1 class2">text <strong class="extrastrong">strong</strong></p>');
+    done();
+  });
   it('list', (done) => {
     const json = {
       type: 'list',
@@ -132,11 +159,30 @@ describe('parseJSON', () => {
     const json = {
       type: 'grid',
       settings: {
-        columns: 'lol'
+        columns: 'lol',
       },
-      content: {}
+      content: {},
     };
-    expect(() => core.parse(json)).to.throw(Error);
-    done()
+    expect(() => core.parse(json)).to.throw(/^invalid settings: {"error":{"message":"String does not match pattern/);
+    done();
   });
-})
+  it('unknown types in parse', (done) => {
+    const json = {
+      type: 'unknown',
+      content: {},
+    };
+    expect(() => core.parse(json)).to.throw(/Class 'unknown' not found/);
+    done();
+  });
+  it('unknown types in jsonToElement', (done) => {
+    const json = {
+      type: 'paragraph',
+      content: {
+        type: 'unknown',
+        content: {}
+      },
+    };
+    expect(() => core.parse(json)).to.throw(/Class 'unknown' not found/);
+    done();
+  });
+});

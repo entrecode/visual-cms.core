@@ -6,7 +6,9 @@
   "directories": {
     "test": "test"
   },
-  "scripts": {},
+  "scripts": {
+    "coverage": "NODE_ENV=testing istanbul cover _mocha -- --recursive -R dot"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/entrecode/visual-cms.core"
@@ -15,6 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.5.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0"
   },
   "dependencies": {
