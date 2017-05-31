@@ -26,7 +26,7 @@ class Element {
       contentElements = content.map(contentPart => jsonToElement(contentPart));
     } else if (content instanceof Element) {
       contentElements = content;
-    } else if (typeof content === 'object' && !(content.hasOwnProperty('type'))) {
+    } else if (typeof content === 'object' && !('type' in content)) {
       contentElements = Object.assign(
         {},
         ...Object.keys(content).map(key => {
@@ -49,11 +49,11 @@ class Element {
         ...(Object.keys(contentElements)
         .filter((key) => {
           if (Array.isArray(contentElements[key])) {
-            return contentElements[key].every(elem => this.supportsContent(elem));
+            return contentElements[key].every(elem => this.supportsContent(elem, key));
           }
-          return this.supportsContent(contentElements[key]);
+          return this.supportsContent(contentElements[key], key);
         })
-        .map(key => ({ [key]: (contentElements[key]) })))
+        .map(key => ({ [key]: contentElements[key] })))
       );
     }
     if (settings) {
@@ -73,8 +73,12 @@ class Element {
     return [];
   }
 
-  supportsContent(content) {
-    return this.supportedContent.some(Class => content instanceof Class);
+  getSupportedContent(property) {
+    return this.supportedContent;
+  }
+
+  supportsContent(content, property) {
+    return this.getSupportedContent(property).some(Class => content instanceof Class);
   }
 
   get settingsSchema() {
@@ -89,7 +93,7 @@ class Element {
   }
 
   get content() {
-    if (this[contentSymbol] === null) {
+    if (!this[contentSymbol]) {
       return '';
     }
     if (Array.isArray(this[contentSymbol])) {
@@ -175,6 +179,7 @@ class ListElement extends Element {
       Text
     ]
   }
+
   get template() {
     return `<li>${this.content}</li>`;
   }
@@ -187,6 +192,7 @@ class List extends FlowElement {
       ListElement
     ];
   }
+
   get settingsSchema() {
     return {
       type: 'object',
@@ -199,6 +205,7 @@ class List extends FlowElement {
       additionalProperties: false,
     };
   }
+
   get template() {
     if (this.settings.ordered) {
       return `<ol>${this.content}</ol>`;
@@ -219,6 +226,15 @@ class Grid extends Module {
     ];
   }
 
+  getSupportedContent(property) {
+    switch (property) {
+    case 'column1':
+      return [Paragraph];
+    default:
+      return this.supportedContent;
+    }
+  }
+
   get settingsSchema() {
     return {
       type: 'object',
@@ -235,7 +251,7 @@ class Grid extends Module {
 
   get template() {
     const columns = this.settings.columns.split(',')
-    .map((columnSize, columnNumber) => `<div class="col-${columnSize}">${this.content[`column${columnNumber}`]}</div>`);
+    .map((columnSize, columnNumber) => `<div class="col-${columnSize}">${this.content[`column${columnNumber}`] || ''}</div>`);
     return `<div class="grid">${columns.join('')}</div>`;
   }
 }
