@@ -139,28 +139,34 @@ class Element {
   }
 
   toJSON() {
-    let content;
-    if (Array.isArray(this.content)) {
-      content = this.content.map(element => element.toJSON());
-    } else if (this.content instanceof Element) {
-      content = this.content.toJSON();
-    } else if (typeof this.content === 'object') {
-      content = Object.assign(
+    const json = {
+      type: this.type,
+      settings: this.settings,
+      content: null,
+    };
+    if (Array.isArray(this[contentSymbol])) {
+      json.content = this[contentSymbol].map(element => element.toJSON());
+    } else if (this[contentSymbol] instanceof Element) {
+      json.content = this[contentSymbol].toJSON();
+    } else if (typeof this[contentSymbol] === 'object') {
+      json.content = Object.assign(
         {},
-        ...Object.keys(this.content)
+        ...Object.keys(this[contentSymbol])
         .map((key) => {
-          if (Array.isArray(this.content[key])) {
-            return this.content[key].map(element => element.toJSON())
+          if (Array.isArray(this[contentSymbol][key])) {
+            return { [key]: this[contentSymbol][key].map(element => element.toJSON()) };
           }
-          return this.content[key].toJSON();
+          return { [key]: this[contentSymbol][key].toJSON() };
         })
       );
     }
-    return {
-      type: this.type,
-      settings: this.settings,
-      content,
-    };
+    if (Object.keys(json.settings).length === 0) {
+      delete json.settings;
+    }
+    if (!json.content) {
+      delete json.content;
+    }
+    return json;
   }
 }
 

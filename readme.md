@@ -216,6 +216,8 @@ The base elements support no additional attributes except `class` (which is defi
     - if `property` is set, it checks `content` to be allowed in the `property` content block.
 - toString()
     - returns `template`
+- toJSON()
+    - returns the JSON representation of the object.
     
 Most of those properties and classes can safely be overridden in custom Elements.
 
