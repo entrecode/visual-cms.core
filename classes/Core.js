@@ -10,6 +10,9 @@ const settingsSymbol = Symbol('settings');
 const library = new Map();
 
 function jsonToElement(json) {
+  if (json instanceof library.get('element')) {
+    return json;
+  }
   const type = typeof json === 'string' ? 'text' : json.type;
   const Class = library.get(type);
   if (!Class) {
@@ -21,6 +24,75 @@ function jsonToElement(json) {
 class Element {
   constructor({ content, settings }) {
     this[supportedContentSymbol] = new Set();
+    this.content = content;
+    this.settings = settings;
+  }
+
+  get type() {
+    return this.constructor.name.toLowerCase();
+  }
+
+  get supportedContent() {
+    return [];
+  }
+
+  getSupportedContent(property) {
+    return this.supportedContent;
+  }
+
+  supportsContent(content, property) {
+    return this.getSupportedContent(property).some(Class => content instanceof Class);
+  }
+
+  get settingsSchema() {
+    return {
+      type: 'object',
+      additionalProperties: false,
+    };
+  }
+
+  get settings() {
+    return this[settingsSymbol];
+  }
+
+  set settings(settings) {
+    if (settings) {
+      const validation = validator.validateResult(settings, this.settingsSchema);
+      if (!validation.valid) {
+        throw new Error(`invalid settings: ${JSON.stringify(validation)}`);
+      }
+      this[settingsSymbol] = Object.assign({}, settings);
+    } else {
+      this[settingsSymbol] = {};
+    }
+  }
+
+  get content() {
+    if (!this[contentSymbol]) {
+      return '';
+    }
+    if (Array.isArray(this[contentSymbol])) {
+      return this[contentSymbol].map(child => child.template).join('');
+    }
+    if (typeof this[contentSymbol] === 'string') {
+      return this[contentSymbol];
+    }
+    if (!(this[contentSymbol] instanceof Element)) {
+      return Object.assign(
+        {},
+        ...Object.keys(this[contentSymbol])
+        .map((key) => {
+          if (Array.isArray(this[contentSymbol][key])) {
+            return { [key]: this[contentSymbol][key].map(element => element.template).join('') };
+          }
+          return { [key]: this[contentSymbol][key].template };
+        })
+      );
+    }
+    return this[contentSymbol].content;
+  }
+
+  set content(content) {
     let contentElements;
     if (Array.isArray(content)) {
       contentElements = content.map(contentPart => jsonToElement(contentPart));
@@ -56,67 +128,6 @@ class Element {
         .map(key => ({ [key]: contentElements[key] }))
       );
     }
-    if (settings) {
-      const validation = validator.validateResult(settings, this.settingsSchema);
-      if (!validation.valid) {
-        throw new Error(`invalid settings: ${JSON.stringify(validation)}`);
-      }
-      this[settingsSymbol] = Object.assign({}, settings);
-    } else {
-      this[settingsSymbol] = {};
-    }
-  }
-
-  get type() {
-    return this.constructor.name.toLowerCase();
-  }
-
-  get supportedContent() {
-    return [];
-  }
-
-  getSupportedContent(property) {
-    return this.supportedContent;
-  }
-
-  supportsContent(content, property) {
-    return this.getSupportedContent(property).some(Class => content instanceof Class);
-  }
-
-  get settingsSchema() {
-    return {
-      type: 'object',
-      additionalProperties: false,
-    };
-  }
-
-  get settings() {
-    return this[settingsSymbol];
-  }
-
-  get content() {
-    if (!this[contentSymbol]) {
-      return '';
-    }
-    if (Array.isArray(this[contentSymbol])) {
-      return this[contentSymbol].map(child => child.template).join('');
-    }
-    if (typeof this[contentSymbol] === 'string') {
-      return this[contentSymbol];
-    }
-    if (!(this[contentSymbol] instanceof Element)) {
-      return Object.assign(
-        {},
-        ...Object.keys(this[contentSymbol])
-        .map((key) => {
-          if (Array.isArray(this[contentSymbol][key])) {
-            return { [key]: this[contentSymbol][key].map(element => element.template).join('') };
-          }
-          return { [key]: this[contentSymbol][key].template };
-        })
-      );
-    }
-    return this[contentSymbol].content;
   }
 
   get template() {
@@ -126,16 +137,56 @@ class Element {
   toString() {
     return this.template;
   }
+
+  toJSON() {
+    let content;
+    if (Array.isArray(this.content)) {
+      content = this.content.map(element => element.toJSON());
+    } else if (this.content instanceof Element) {
+      content = this.content.toJSON();
+    } else if (typeof this.content === 'object') {
+      content = Object.assign(
+        {},
+        ...Object.keys(this.content)
+        .map((key) => {
+          if (Array.isArray(this.content[key])) {
+            return this.content[key].map(element => element.toJSON())
+          }
+          return this.content[key].toJSON();
+        })
+      );
+    }
+    return {
+      type: this.type,
+      settings: this.settings,
+      content,
+    };
+  }
 }
 
 class Text extends Element {
   constructor(string) {
     super({ content: [] });
-    this[contentSymbol] = string;
+    this.content = string;
   }
 
   get content() {
     return this[contentSymbol];
+  }
+
+  set content(content) {
+    if (Array.isArray(content) && content.length === 0) {
+      this[contentSymbol] = '';
+      return;
+    }
+    if (typeof content !== 'string') {
+      throw new Error('Text only supports string content!');
+    }
+    this[contentSymbol] = content;
+  }
+
+  toJSON() {
+    return this.content;
   }
 }
 
@@ -290,6 +341,7 @@ class Grid extends Module {
   }
 }
 
+library.set('element', Element);
 library.set('text', Text);
 library.set('strong', Strong);
 library.set('list', List);

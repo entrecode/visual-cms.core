@@ -38,8 +38,8 @@ The Objects need to conform to the JSON Schema in `./schema/visualcms.json`
 
 ## High Level Visual CMS
 
-This is the new shit.
-Our goal was to have basically the same "HTML in a JSON Structure", but with more constraints, 
+This is the more elaborated version of Visual CMS.
+It is basically the same old "HTML in a JSON Structure", but with more constraints, 
 more validation and type inheritance.
 
 All entities in Visual CMS are Elements.
@@ -81,7 +81,7 @@ This means, you can either create a Visual CMS JSON document or directly create 
 instances in JS code. Both can be used to create HTML. The JSON representation can be
 written into and read from a database or transferred in other ways.
 
-## JSON Structure
+### JSON Structure
 
 JSON Schema: https://github.com/entrecode/visual-cms.core/blob/master/schema/vcms-base.json
 
@@ -142,7 +142,7 @@ This would render to:
 </ul>
 ```
 
-## Pre-defined Elements
+### Pre-defined Elements
 
 This is the inheritance tree of the basic Element classes:
 
@@ -179,4 +179,168 @@ which renders an HTML like `<div><img src="…"><span class="imgTitle">Descripti
 The base elements support no additional attributes except `class` (which is defined in 
 `BaseElement` as a settings parameter). If you really need something else, just create a Child element.
  
+### Class Documentation
+
+#### Element
+##### Properties
+
+- type (String, readonly) 
+    - the lowercased Class name, and the identifier used in the `type` property
+    of the JSON representation. 
+- supportedContent (Array<ElementClass>, readonly)
+    - returns an Array of Element classes that are allowed in the default content
+    - use getSupportedContent() if you have multiple content blocks 
+- settingsSchema (JSON Schema, readonly)
+    - returns a JSON Schema for the 'settings' property
+- settings (JSON, read/write)
+    - custom settings for element instances. Should conform to `settingsSchema`
+- content (JSON, read/write)
+    - the content of the element
+    - either a String (basic Text Element)
+    - or an allowed Element (in `supportedContent` Array)
+    - or an Array of Elements and Strings
+    - or a map of content blocks, each with the above defined content. Each block can
+    have constraints to Element types that can be read with `getSupportedContent(property)`
+ - template (string, readonly)
+    - returns the HTML representation.
+    
+##### Methods
+
+- Constructor ({ content, settings })
+    - expects an Object with `content` and `settings` properties, both optional
+- getSupportedContent([property])
+    - returns an Array of supported Content Element Classes
+    - if `property` is set, it returns the List for the specific content block
+- supportsContent(content[, property])
+    - returns `true`, if the `content` is allowed, `false` otherwise.
+    - if `property` is set, it checks `content` to be allowed in the `property` content block.
+- toString()
+    - returns `template`
+    
+Most of those properties and classes can safely be overridden in custom Elements.
+
+### Subclassing
+
+Example: 
+```js
+const visualCMS = require ('visual-cms.core');
+
+const {
+    Element,
+    Text,
+    BaseElement,
+    PhrasingElement,
+    FlowElement,
+    Module
+} = visualCMS.elements;
+
+class MyElement extends Module {
+  get supportedContent() {
+    return [
+      FlowElement,
+    ];
+  }
+
+  get template() {
+    return `<div class="awesome">${this.content}</div>`;
+  }
+}
+
+```
+The following properties, getter/setter and functions are available for Overriding
+in inherited Element Classes:
+ 
+#### constructor({ content, settings}) 
+*This should probably not be overridden.*
+The constructor expects an object with optional `content` and `settings` properties.
+`content` may be Visual CMS Objects, or JSON that will be transformed.
+Unallowed content types will be removed, but not fail.
+`settings` will throw an error if they do not conform to the allowed JSON Schema.
+
+#### get type()
+*This should probably not be overridden.*
+The Getter for the `type` property simply returns the Class Name (`this.constructor.name`) lowercased,
+this is used in the JSON representations to match a JSON Visual CMS Object to the
+correct JavaScript Object.
+
+#### get supportedContent()
+The Getter for the `supportedContent` property returns an Array of Classes that the
+default content supports. Example: 
+```js
+get supportedContent() {
+  return [ Text, PhrasingElement ];
+}
+```
+This makes Text and all Pharsing Elements valid content elements.
+
+#### getSupportedContent([property])
+This function just returns `this.supportedContent` by default.
+However, if you support multiple content blocks instead of just the default one,
+you can differentiate using the given `property` which content block supports which Content.
+Return value should always be an Array of Visual CMS Classes.
+Example:
+```js
+getSupportedContent(property) {
+    switch (property) {
+    case 'header':
+      return [Image];
+    case 'column1':
+      return [Paragraph];
+    default:
+      return this.supportedContent;
+    }
+}
+```
+This would allow only Image objects as content for `content.header`,
+and only Paragraphs inside `content.column1`.
+All other content (e.g. `content.column2`, if that exists) returns the
+default given from the `supportedContent` Getter.
+
+#### get settingsSchema()
+The getter for `settingsSchema` is expected to return a valid JSON Schema.
+By default (i.e. as defined in the Getter of the Element Root Class) it is
+a Schema that allows an Object type with no additional Properties, i.e. an empty Object.
+It is recommended to exactly define desired settings properties and make them required,
+and to disallow `additionalProperties`.
+Example:
+```js
+get settingsSchema() {
+  return {
+    type: 'object',
+    properties: {
+    columns: {
+        type: 'string',
+        pattern: '^[1-9][0-9]*(,[1-9][0-9]*)*$',
+      },
+    },
+    required: ['columns'],
+    additionalProperties: false,
+  };
+}
+```
+#### get template()
+This finally returns the HTML that is to be rendered from Objects of your Element Class.
+You are free to access `this.settings` and `this.content` to render your favorite HTML module.
+Just make sure you return a string that does not contain `undefined` anywhere.
+It is recommended to use [Template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals).
+Example:
+```js
+get template() {
+if (this.settings.ordered) {
+  return `<ol${this.classAttribute}>${this.content}</ol>`;
+}
+return `<ul${this.classAttribute}>${this.content}</ul>`;
+}
+```
+
+### API Documentation
+
+### parse(json)
+This function expects an JSON representation of Visual CMS Element objects, or an
+Array of those objects. It will try to parse them into Element instances (or an 
+Array of instances). It will throw an Error if the used types are not known.
+
+### register(...Element)
+Use this function when you created custom Elements. It is necessary to
+register them with the library so they will be recognized.
 
