@@ -273,7 +273,7 @@ get supportedContent() {
   return [ Text, PhrasingElement ];
 }
 ```
-This makes Text and all Pharsing Elements valid content elements.
+This makes Text and all Phrasing Elements valid content elements.
 
 #### getSupportedContent([property])
 This function just returns `this.supportedContent` by default.

@@ -84,6 +84,33 @@ describe('parseJSON', () => {
     expect(elements.map(e => e.toString()).join('')).to.eql('sdfsdfsdf <p class="class1 class2">text <strong class="extrastrong">strong</strong></p>');
     done();
   });
+  it('parse result array toString is correctly rendered', (done) => {
+    const json = [
+      'sdfsdfsdf ',
+      {
+        type: 'paragraph',
+        settings: {
+          class: ['class1', 'class2']
+        },
+        content: [
+          'text ',
+          {
+            type: 'strong',
+            settings: {
+              class: ['extrastrong'],
+            },
+            content: 'strong',
+          },
+        ],
+      },
+    ];
+    const elements = core.parse(json);
+    expect(elements).to.have.lengthOf(2);
+    expect(elements[0]).to.be.instanceof(core.elements.Text);
+    expect(elements[1]).to.be.instanceof(core.elements.Paragraph);
+    expect(elements.toString()).to.eql('sdfsdfsdf <p class="class1 class2">text <strong class="extrastrong">strong</strong></p>');
+    done();
+  });
   it('list', (done) => {
     const json = {
       type: 'list',
@@ -104,15 +131,20 @@ describe('parseJSON', () => {
           ]
         },
         {
-          type: 'list',
-          settings: {
-            ordered: true,
-          },
+          type: 'listelement',
           content: [
             {
-              type: 'listelement',
+              type: 'list',
+              settings: {
+                ordered: true,
+              },
               content: [
-                'or other lists for nesting'
+                {
+                  type: 'listelement',
+                  content: [
+                    'or other lists for nesting'
+                  ]
+                }
               ]
             }
           ]
@@ -120,7 +152,7 @@ describe('parseJSON', () => {
       ]
     };
     const html = core.parse(json);
-    expect(html.toString()).to.eql(`<ul><li>Lists can contain list elements which become <strong>li tags</strong></li><ol><li>or other lists for nesting</li></ol></ul>`)
+    expect(html.toString()).to.eql(`<ul><li>Lists can contain list elements which become <strong>li tags</strong></li><li><ol><li>or other lists for nesting</li></ol></li></ul>`)
     done();
   });
   it('list toJSON', (done) => {
@@ -143,15 +175,20 @@ describe('parseJSON', () => {
           ]
         },
         {
-          type: 'list',
-          settings: {
-            ordered: true,
-          },
+          type: 'listelement',
           content: [
             {
-              type: 'listelement',
+              type: 'list',
+              settings: {
+                ordered: true,
+              },
               content: [
-                'or other lists for nesting'
+                {
+                  type: 'listelement',
+                  content: [
+                    'or other lists for nesting'
+                  ]
+                }
               ]
             }
           ]

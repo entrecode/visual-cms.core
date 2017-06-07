@@ -267,6 +267,7 @@ class Paragraph extends FlowElement {
 class ListElement extends Element {
   get supportedContent() {
     return [
+      List,
       PhrasingElement,
       Text,
     ];
@@ -280,7 +281,6 @@ class ListElement extends Element {
 class List extends FlowElement {
   get supportedContent() {
     return [
-      List,
       ListElement,
     ];
   }
@@ -357,7 +357,11 @@ library.set('grid', Grid);
 
 function parse(json) {
   if (Array.isArray(json)) {
-    return json.map(contentPart => parse(contentPart));
+    const array = json.map(contentPart => parse(contentPart));
+    array.toString = function toString() {
+      return this.map(element => element.toString()).join('');
+    };
+    return array;
   }
   const type = typeof json === 'string' ? 'text' : json.type;
   const Class = library.get(type);
