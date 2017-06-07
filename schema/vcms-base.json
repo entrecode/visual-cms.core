@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "https://entrecode.de/schema/vcms-base",
+  "definitions": {
+    "element": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "settings": {
+          "type": "object"
+        },
+        "content": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/text"
+            },
+            {
+              "$ref": "#/definitions/element"
+            },
+            {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/text"
+                  },
+                  {
+                    "$ref": "#/definitions/element"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/text"
+                  },
+                  {
+                    "$ref": "#/definitions/element"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ]
+    },
+    "text": {
+      "type": "string"
+    },
+    "content": {
+    }
+  },
+  "$ref": "#/definitions/element"
+}

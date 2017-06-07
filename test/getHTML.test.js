@@ -1,8 +1,49 @@
 const chai = require('chai');
 
-const core = require('../classes/Core');
+const core = require('../index');
+
+const { Module, FlowElement, Paragraph } = core.elements;
 
 const expect = chai.expect;
+
+class Grid extends Module {
+  get supportedContent() {
+    return [
+      FlowElement,
+    ];
+  }
+
+  getSupportedContent(property) {
+    switch (property) {
+    case 'column1':
+      return [Paragraph];
+    default:
+      return this.supportedContent;
+    }
+  }
+
+  get settingsSchema() {
+    return {
+      type: 'object',
+      properties: {
+        columns: {
+          type: 'string',
+          pattern: '^[1-9][0-9]*(,[1-9][0-9]*)*$',
+        },
+      },
+      required: ['columns'],
+      additionalProperties: false,
+    };
+  }
+
+  get template() {
+    const columns = this.settings.columns.split(',')
+    .map((columnSize, columnNumber) => `<div class="col-${columnSize}">${this.content[`column${columnNumber}`] || ''}</div>`);
+    return `<div class="grid">${columns.join('')}</div>`;
+  }
+}
+
+core.register(Grid);
 
 describe('simple Elements', () => {
   it('simple Text', (done) => {
