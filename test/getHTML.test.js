@@ -355,3 +355,215 @@ describe('parseJSON', () => {
     done();
   });
 });
+
+describe('base elements', () => {
+  it('asmuchaspossibleinonejson', (done) => {
+    const json = [
+      {
+        type: 'paragraph',
+        content: [
+          'Text. ',
+          {
+            type: 'link',
+            settings: {
+              href: 'https://entrecode.de',
+              newTab: true,
+              rel: ['nofollow'],
+              class: ['awesome'],
+            },
+            content: [
+              'The link'
+            ]
+          },
+          {
+            type: 'code',
+            content: 'lol'
+          },
+          {
+            type: 'emphasis',
+            content: 'em'
+          }
+        ]
+      },
+      {
+        type: 'headline',
+        settings: {
+          level: 2,
+        },
+        content: [
+          {
+            type: 'strong',
+            content: 'strong in head'
+          },
+          {
+            type: 'subscript',
+            content: 'sub'
+          },
+          {
+            type: 'superscript',
+            content: 'sup'
+          },
+        ]
+      },
+      {
+        type: 'quote',
+        content: [
+          'cited ',
+          {
+            type: 'link',
+            settings: {
+              href: 'http://entrecode.de',
+            },
+            content: 'simple link'
+          }
+        ]
+      }
+    ];
+    const html = core.parse(json);
+    expect(html.map(e => e.toString()).join('')).to.eql(`<p>Text. \
+<a href="https://entrecode.de" target="_blank" rel="nofollow" class="awesome">The link</a>\
+<code>lol</code>\
+<em>em</em>\
+</p>\
+<h2>\
+<strong>strong in head</strong>\
+<sub>sub</sub>\
+<sup>sup</sup>\
+</h2>\
+<blockquote>cited <a href="http://entrecode.de">simple link</a></blockquote>`);
+    expect(html.map(e => e.toJSON())).to.deep.eql(json);
+    done();
+  });
+  describe('image tags', () => {
+    it('simple image', (done) => {
+      const json = [
+        {
+          type: 'image',
+          settings: {
+            src: 'https://entreco.de/image.png',
+            alt: 'simple image',
+          },
+        },
+      ];
+      const html = core.parse(json);
+      expect(html.map(e => e.toString()).join('')).to.eql(`\
+<img src="https://entreco.de/image.png" alt="simple image">`);
+      expect(html.map(e => e.toJSON())).to.deep.eql(json);
+      done();
+    });
+
+    it('image with properties, simple link', (done) => {
+      const json = [
+        {
+          type: 'image',
+          settings: {
+            src: 'https://entreco.de/image.png',
+            alt: 'simple image',
+            height: 100,
+            width: 200,
+            href: 'https://entrecode.de',
+            class: ['awesome'],
+            title: 'whaaaat',
+          },
+        },
+      ];
+      const html = core.parse(json);
+      expect(html.map(e => e.toString()).join('')).to.eql(`\
+<a href="https://entrecode.de" class="awesome" title="whaaaat">\
+<img src="https://entreco.de/image.png" alt="simple image" width="200" height="100">\
+</a>`);
+      expect(html.map(e => e.toJSON())).to.deep.eql(json);
+      done();
+    });
+
+    it('image with properties, link, in wrapper', (done) => {
+      const json = [
+        {
+          type: 'image',
+          settings: {
+            src: 'https://entreco.de/image.png',
+            alt: 'simple image',
+            href: 'https://entrecode.de',
+            rel: ['nofollow'],
+            newTab: true,
+            class: ['awesome'],
+            title: 'whaaaat',
+            wrap: true,
+          },
+        },
+      ];
+      const html = core.parse(json);
+      expect(html.map(e => e.toString()).join('')).to.eql(`\
+<div class="awesome" title="whaaaat">\
+<a href="https://entrecode.de" target="_blank" rel="nofollow">\
+<img src="https://entreco.de/image.png" alt="simple image">\
+</a></div>`);
+      expect(html.map(e => e.toJSON())).to.deep.eql(json);
+      done();
+    });
+
+    it('responsive image', (done) => {
+      const json = [
+        {
+          type: 'image',
+          settings: {
+            src: 'https://entreco.de/image.png',
+            alt: 'simple image',
+            class: ['awesome'],
+            title: 'whaaaat',
+            wrap: false,
+            responsive: {
+              srcs: {
+                '500w': 'https://entreco.de/image-500.png',
+                '800w': 'https://entreco.de/image-800.png',
+                '2x': 'https://entreco.de/image-2x.png',
+              },
+              sizes: {
+                default: '500w',
+                '(min-width: 400px)': '800w',
+              },
+            },
+          },
+        },
+      ];
+      const html = core.parse(json);
+      expect(html.map(e => e.toString()).join('')).to.eql(`\
+<img src="https://entreco.de/image.png" alt="simple image"\
+ srcset="https://entreco.de/image-500.png 500w, https://entreco.de/image-800.png 800w, https://entreco.de/image-2x.png 2x"\
+ sizes="(min-width: 400px) 800w, 500w"\
+ class="awesome" title="whaaaat">`);
+      expect(html.map(e => e.toJSON())).to.deep.eql(json);
+      done();
+    });
+    it('responsive image without sizes', (done) => {
+      const json = [
+        {
+          type: 'image',
+          settings: {
+            src: 'https://entreco.de/image.png',
+            alt: 'simple image',
+            class: ['awesome'],
+            title: 'whaaaat',
+            wrap: true,
+            responsive: {
+              srcs: {
+                '500w': 'https://entreco.de/image-500.png',
+                '800w': 'https://entreco.de/image-800.png',
+                '2x': 'https://entreco.de/image-2x.png',
+              }
+            },
+          },
+        },
+      ];
+      const html = core.parse(json);
+      expect(html.map(e => e.toString()).join('')).to.eql(`\
+<div class="awesome" title="whaaaat">\
+<img src="https://entreco.de/image.png" alt="simple image"\
+ srcset="https://entreco.de/image-500.png 500w, https://entreco.de/image-800.png 800w, https://entreco.de/image-2x.png 2x"\
+></div>`);
+      expect(html.map(e => e.toJSON())).to.deep.eql(json);
+      done();
+    });
+
+  });
+});

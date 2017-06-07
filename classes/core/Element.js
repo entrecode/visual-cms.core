@@ -6,7 +6,6 @@ const { contentSymbol, supportedContentSymbol, settingsSymbol } = require('./sym
 const validator = tv4.freshApi();
 validator.addFormat(tv4formats);
 
-
 module.exports = class Element {
   constructor({ content, settings }) {
     this[supportedContentSymbol] = new Set();
@@ -82,7 +81,10 @@ module.exports = class Element {
     const { jsonToElement } = require('../library');
 
     let contentElements;
-    if (Array.isArray(content)) {
+    if (!content || (Array.isArray(content) && content.length === 0)) {
+      this[contentSymbol] = undefined;
+      return;
+    } else if (Array.isArray(content)) {
       contentElements = content.map(contentPart => jsonToElement(contentPart));
     } else if (content instanceof Element) {
       contentElements = content;
@@ -130,7 +132,7 @@ module.exports = class Element {
     const json = {
       type: this.type,
       settings: this.settings,
-      content: null,
+      content: undefined,
     };
     if (Array.isArray(this[contentSymbol])) {
       json.content = this[contentSymbol].map(element => element.toJSON());

@@ -78,10 +78,6 @@ class Image extends FlowElement {
     return schema;
   }
 
-  get supportedContent() {
-    return [];
-  }
-
   get template() {
     const widthAttribute = this.settings.width ? ` width="${this.settings.width}"` : '';
     const heightAttribute = this.settings.height ? ` height="${this.settings.height}"` : '';
@@ -91,14 +87,15 @@ class Image extends FlowElement {
       .map(descriptor => `${this.settings.responsive.srcs[descriptor]} ${descriptor}`)
       .join(', ');
       srcSet = ` srcset="${srcSetValues}"`;
+      let sizes = '';
       if (this.settings.responsive.sizes) {
-        let sizes = Object.keys(this.settings.responsive.sizes)
+        sizes = Object.keys(this.settings.responsive.sizes)
         .filter(mediaCondition => mediaCondition !== 'default')
         .map(mediaCondition => `${mediaCondition} ${this.settings.responsive.sizes[mediaCondition]}`);
         sizes.push(this.settings.responsive.sizes.default);
-        sizes = sizes.join(', ');
+        sizes = ` sizes="${sizes.join(', ')}"`;
       }
-      srcSet += ` sizes="${sizes}"`;
+      srcSet += sizes;
     }
     const imageAttributes = `\
  src="${this.settings.src}"\
