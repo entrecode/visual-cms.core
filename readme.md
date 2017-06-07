@@ -164,11 +164,11 @@ This is the inheritance tree of the basic Element classes:
         - Image (`<img>`)
         - Quote (`<blockquote>`)
         - List (`<ul>`, `<ol>`)
-    - ListElement (`<li>`)
+      - ListElement (`<li>`)
     - Module (abstract)
       - *Your custom module elements*
     
-Wonder why `ListElement` is a direct child of `Element`? 
+Wonder why `ListElement` is a direct child of `BaseElement`? 
 Because it is only allowed inside Lists and not anywhere else where we
 would want to allow all `PhrasingElement`s or all `FlowElement`s.
 
@@ -247,6 +247,8 @@ class MyElement extends Module {
     return `<div class="awesome">${this.content}</div>`;
   }
 }
+
+visualCMS.register(MyElement);
 
 ```
 The following properties, getter/setter and functions are available for Overriding

@@ -1,7 +1,7 @@
-const { Element, PhrasingElement, Text } = require('../core');
+const { BaseElement, PhrasingElement, Text } = require('../core');
 const List = require('./List');
 
-class ListElement extends Element {
+class ListElement extends BaseElement {
   get supportedContent() {
     return [
       List,
