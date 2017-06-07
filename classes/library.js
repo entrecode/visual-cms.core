@@ -1,13 +1,39 @@
-const { Element, Text, Strong, List, ListElement, Paragraph } = require('./elements');
+const {
+  Element,
+  Text,
+  Code,
+  Emphasis,
+  Headline,
+  Image,
+  Link,
+  List,
+  ListElement,
+  Paragraph,
+  Quote,
+  Strong,
+  Subscript,
+  Superscript,
+} = require('./elements');
 
 const library = new Map();
 
-library.set('element', Element);
 library.set('text', Text);
-library.set('strong', Strong);
-library.set('list', List);
-library.set('listelement', ListElement);
-library.set('paragraph', Paragraph);
+[
+  Code,
+  Emphasis,
+  Headline,
+  Image,
+  Link,
+  List,
+  ListElement,
+  Paragraph,
+  Quote,
+  Strong,
+  Subscript,
+  Superscript,
+].forEach((Class) => {
+  library.set(Class.name.toLowerCase(), Class);
+});
 
 const abstractTypes = ['baseelement', 'phrasingelement', 'flowelement', 'module'];
 
@@ -44,7 +70,7 @@ function parse(json) {
 }
 
 function jsonToElement(json) {
-  if (json instanceof library.get('element')) {
+  if (json instanceof Element) {
     return json;
   }
   const type = typeof json === 'string' ? 'text' : json.type;

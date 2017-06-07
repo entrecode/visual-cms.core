@@ -11,7 +11,7 @@ class ListElement extends BaseElement {
   }
 
   get template() {
-    return `<li>${this.content}</li>`;
+    return `<li${this.classAttribute}${this.titleAttribute}>${this.content}</li>`;
   }
 }
 

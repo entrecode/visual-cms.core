@@ -1,6 +1,6 @@
 const { FlowElement, PhrasingElement, Text } = require('../core');
 
-class Paragraph extends FlowElement {
+class Quote extends FlowElement {
   get supportedContent() {
     return [
       PhrasingElement,
@@ -9,8 +9,8 @@ class Paragraph extends FlowElement {
   }
 
   get template() {
-    return `<p${this.classAttribute}${this.titleAttribute}>${this.content}</p>`;
+    return `<blockquote${this.classAttribute}${this.titleAttribute}>${this.content}</blockquote>`;
   }
 }
 
-module.exports = Paragraph;
+module.exports = Quote;

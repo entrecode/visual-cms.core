@@ -1,6 +1,6 @@
 const { PhrasingElement, Text } = require('../core');
 
-class Strong extends PhrasingElement {
+class Subscript extends PhrasingElement {
   get supportedContent() {
     return [
       PhrasingElement,
@@ -9,8 +9,8 @@ class Strong extends PhrasingElement {
   }
 
   get template() {
-    return `<strong${this.classAttribute}${this.titleAttribute}>${this.content}</strong>`;
+    return `<sub${this.classAttribute}${this.titleAttribute}>${this.content}</sub>`;
   }
 }
 
-module.exports = Strong;
+module.exports = Subscript;

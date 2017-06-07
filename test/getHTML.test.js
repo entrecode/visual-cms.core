@@ -240,6 +240,26 @@ describe('parseJSON', () => {
     expect(html.toJSON()).to.deep.eql(json);
     done();
   });
+  it('link', (done) => {
+    const json = [
+      {
+        type: 'link',
+        settings: {
+          href: 'https://entrecode.de',
+          newTab: true,
+          rel: ['nofollow'],
+          class: ['awesome'],
+        },
+        content: [
+          'The link'
+        ]
+      }
+    ];
+    const [html] = core.parse(json);
+    expect(html.toString()).to.eql('<a href="https://entrecode.de" target="_blank" rel="nofollow" class="awesome">The link</a>');
+    expect([html.toJSON()]).to.deep.eql(json);
+    done();
+  });
   it('grid custom module', (done) => {
     const json = {
       type: 'grid',

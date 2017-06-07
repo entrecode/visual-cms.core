@@ -12,6 +12,9 @@ class BaseElement extends Element {
             pattern: '^[a-zA-Z0-9\\-_]+$',
           },
         },
+        title: {
+          type: 'string',
+        },
       },
       additionalProperties: false,
     };
@@ -30,6 +33,13 @@ class BaseElement extends Element {
       return '';
     }
     return classArray.join(' ');
+  }
+
+  get titleAttribute() {
+    if (this.settings.title) {
+      return ` title="${this.settings.title}"`;
+    }
+    return '';
   }
 
 }

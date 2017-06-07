@@ -1,15 +1,4 @@
-const { Element, Text, BaseElement, PhrasingElement, FlowElement, Module } = require('./core');
-const { List, ListElement, Paragraph, Strong } = require('./base');
+const coreElements = require('./core');
+const baseElements = require('./base');
 
-module.exports = {
-  Element,
-  Text,
-  BaseElement,
-  PhrasingElement,
-  FlowElement,
-  Module,
-  ListElement,
-  List,
-  Paragraph,
-  Strong,
-};
+module.exports = Object.assign({}, baseElements, coreElements);
