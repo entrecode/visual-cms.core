@@ -57,6 +57,12 @@ describe('simple Elements', () => {
     expect(strong.template).to.eql('<strong>test</strong>');
     done();
   });
+  it('strong with id in output', (done) => {
+    const text = new core.elements.Text('test');
+    const strong = new core.elements.Strong({ content: text });
+    expect(strong.toStringWithDataID()).to.match(/^<strong data-ec-id="[a-f0-9-]+">test<\/strong>$/);
+    done();
+  });
   it('strong with array of content', (done) => {
     const text = new core.elements.Text('test');
     const text1 = new core.elements.Text('test2');

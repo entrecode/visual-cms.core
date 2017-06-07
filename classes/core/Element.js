@@ -1,16 +1,22 @@
 const tv4 = require('tv4');
 const tv4formats = require('tv4-formats');
+const uuidV4 = require('uuid/v4')
 
-const { contentSymbol, supportedContentSymbol, settingsSymbol } = require('./symbols');
+const { idSymbol, contentSymbol, supportedContentSymbol, settingsSymbol } = require('./symbols');
 
 const validator = tv4.freshApi();
 validator.addFormat(tv4formats);
 
 module.exports = class Element {
   constructor({ content, settings }) {
+    this[idSymbol] = uuidV4();
     this[supportedContentSymbol] = new Set();
     this.content = content;
     this.settings = settings;
+  }
+
+  get id() {
+    return this[idSymbol];
   }
 
   get type() {
@@ -126,6 +132,11 @@ module.exports = class Element {
 
   toString() {
     return this.template;
+  }
+
+  toStringWithDataID() {
+    return this.toString()
+    .replace(/>/, ` data-ec-id="${this.id}">`);
   }
 
   toJSON() {
