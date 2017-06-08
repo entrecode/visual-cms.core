@@ -371,6 +371,69 @@ describe('parseJSON', () => {
 });
 
 describe('base elements', () => {
+  it('block', (done) => {
+    const json = { type: 'block', content: [
+      {
+        type: 'paragraph',
+        content: [
+          'Text. ',
+          {
+            type: 'link',
+            settings: {
+              href: 'https://entrecode.de',
+              newTab: true,
+              rel: ['nofollow'],
+              class: ['awesome'],
+            },
+            content: [
+              'The link'
+            ]
+          },
+          {
+            type: 'code',
+            content: 'lol'
+          },
+          {
+            type: 'emphasis',
+            content: 'em'
+          }
+        ]
+      },
+      {
+        type: 'headline',
+        settings: {
+          level: 2,
+        },
+        content: [
+          {
+            type: 'strong',
+            content: 'strong in head'
+          },
+          {
+            type: 'subscript',
+            content: 'sub'
+          },
+          {
+            type: 'superscript',
+            content: 'sup'
+          },
+        ]
+      }
+    ]};
+    const html = core.parse(json);
+    expect(html.toString()).to.eql(`<div><p>Text. \
+<a href="https://entrecode.de" target="_blank" rel="nofollow" class="awesome">The link</a>\
+<code>lol</code>\
+<em>em</em>\
+</p>\
+<h2>\
+<strong>strong in head</strong>\
+<sub>sub</sub>\
+<sup>sup</sup>\
+</h2></div>`);
+    expect(html.toJSON()).to.deep.eql(json);
+    done();
+  });
   it('asmuchaspossibleinonejson', (done) => {
     const json = [
       {

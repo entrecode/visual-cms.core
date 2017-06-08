@@ -1,6 +1,7 @@
 const {
   Element,
   Text,
+  Block,
   Code,
   Emphasis,
   Headline,
@@ -19,6 +20,7 @@ const library = new Map();
 
 library.set('text', Text);
 [
+  Block,
   Code,
   Emphasis,
   Headline,

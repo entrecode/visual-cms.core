@@ -1,3 +1,4 @@
+const Block = require('./Block');
 const Code = require('./Code');
 const Emphasis = require('./Emphasis');
 const Headline = require('./Headline');
@@ -12,6 +13,7 @@ const Subscript = require('./Subscript');
 const Superscript = require('./Superscript');
 
 module.exports = {
+  Block,
   Code,
   Emphasis,
   Headline,
