@@ -78,7 +78,7 @@ class Image extends FlowElement {
     return schema;
   }
 
-  toString() {
+  toString(includeID) {
     const widthAttribute = this.settings.width ? ` width="${this.settings.width}"` : '';
     const heightAttribute = this.settings.height ? ` height="${this.settings.height}"` : '';
     let srcSet = '';
@@ -117,7 +117,7 @@ ${rel}\
     }
     let html = '';
     if (this.settings.wrap) {
-      html = `<div${this.classAttribute}${this.titleAttribute}>`;
+      html = `<div${this.getRootElementAttributes(includeID)}>`;
       if (this.settings.href) {
         html += `<a${aAttributes}><img${imageAttributes}></a>`;
       } else {
@@ -127,9 +127,9 @@ ${rel}\
       return html;
     }
     if (this.settings.href) {
-      html += `<a${aAttributes}${this.classAttribute}${this.titleAttribute}><img${imageAttributes}></a>`;
+      html += `<a${aAttributes}${this.getRootElementAttributes(includeID)}><img${imageAttributes}></a>`;
     } else {
-      html += `<img${imageAttributes}${this.classAttribute}${this.titleAttribute}>`;
+      html += `<img${imageAttributes}${this.getRootElementAttributes(includeID)}>`;
     }
     return html;
   }

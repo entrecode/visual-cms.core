@@ -8,8 +8,8 @@ class Subscript extends PhrasingElement {
     ];
   }
 
-  toString() {
-    return `<sub${this.classAttribute}${this.titleAttribute}>${this.content}</sub>`;
+  toString(includeID) {
+    return `<sub${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</sub>`;
   }
 }
 

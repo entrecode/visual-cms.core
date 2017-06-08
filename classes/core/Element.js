@@ -59,28 +59,7 @@ module.exports = class Element {
   }
 
   get content() {
-    if (!this[contentSymbol]) {
-      return '';
-    }
-    if (Array.isArray(this[contentSymbol])) {
-      return this[contentSymbol].map(child => child.template).join('');
-    }
-    if (typeof this[contentSymbol] === 'string') {
-      return this[contentSymbol];
-    }
-    if (!(this[contentSymbol] instanceof Element)) {
-      return Object.assign(
-        {},
-        ...Object.keys(this[contentSymbol])
-        .map((key) => {
-          if (Array.isArray(this[contentSymbol][key])) {
-            return { [key]: this[contentSymbol][key].map(element => element.template).join('') };
-          }
-          return { [key]: this[contentSymbol][key].template };
-        })
-      );
-    }
-    return this[contentSymbol].content;
+    return this[contentSymbol];
   }
 
   set content(content) {
@@ -130,13 +109,48 @@ module.exports = class Element {
     return this.toString();
   }
 
-  toString() {
+  getContent(includeID) {
+    if (!this[contentSymbol]) {
+      return '';
+    }
+    if (Array.isArray(this[contentSymbol])) {
+      return this[contentSymbol].map(child => child.toString(includeID)).join('');
+    }
+    if (typeof this[contentSymbol] === 'string') {
+      return this[contentSymbol];
+    }
+    if (!(this[contentSymbol] instanceof Element)) {
+      return Object.assign(
+        {},
+        ...Object.keys(this[contentSymbol])
+        .map((key) => {
+          if (Array.isArray(this[contentSymbol][key])) {
+            return { [key]: this[contentSymbol][key].map(element => element.toString(includeID)).join('') };
+          }
+          return { [key]: this[contentSymbol][key].toString(includeID) };
+        })
+      );
+    }
+    return this[contentSymbol].content;
+  }
+
+  getRootElementAttributes(includeID) {
+    let attributeString = '';
+    if (includeID) {
+      attributeString += ` data-ec-id="${this.id}"`;
+    }
+    return attributeString;
+  }
+
+  toString(includeID) {
+    if (includeID) {
+      return `<span${this.getRootElementAttributes(includeID)}>${this.getContent()}</span>`;
+    }
     return this.content;
   }
 
   toStringWithDataID() {
-    return this.toString()
-    .replace(/>/, ` data-ec-id="${this.id}">`);
+    return this.toString(true);
   }
 
   toJSON() {

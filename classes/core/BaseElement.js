@@ -42,6 +42,18 @@ class BaseElement extends Element {
     return '';
   }
 
+  getRootElementAttributes(includeID) {
+    let attributeString = super.getRootElementAttributes(includeID);
+    if (this.settings.title) {
+      attributeString += ` title="${this.settings.title}"`;
+    }
+    if (this.classAttributeValue.length > 0) {
+      attributeString += ` class="${this.classAttributeValue}"`;
+    }
+    return attributeString;
+  }
+
+
 }
 
 module.exports = BaseElement;

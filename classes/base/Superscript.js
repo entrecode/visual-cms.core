@@ -8,8 +8,8 @@ class Superscript extends PhrasingElement {
     ];
   }
 
-  toString() {
-    return `<sup${this.classAttribute}${this.titleAttribute}>${this.content}</sup>`;
+  toString(includeID) {
+    return `<sup${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</sup>`;
   }
 }
 

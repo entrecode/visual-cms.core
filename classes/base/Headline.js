@@ -28,9 +28,9 @@ class Headline extends FlowElement {
     ];
   }
 
-  toString() {
-    return `<h${this.level}${this.classAttribute}${this.titleAttribute}>\
-${this.content}</h${this.level}>`;
+  toString(includeID) {
+    return `<h${this.level}${this.getRootElementAttributes(includeID)}>\
+${this.getContent(includeID)}</h${this.level}>`;
   }
 }
 

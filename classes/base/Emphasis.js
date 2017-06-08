@@ -8,8 +8,8 @@ class Emphasis extends PhrasingElement {
     ];
   }
 
-  toString() {
-    return `<em${this.classAttribute}${this.titleAttribute}>${this.content}</em>`;
+  toString(includeID) {
+    return `<em${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</em>`;
   }
 }
 

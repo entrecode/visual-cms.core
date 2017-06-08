@@ -54,13 +54,13 @@ class Link extends PhrasingElement {
     return '';
   }
 
-  toString() {
+  toString(includeID) {
     return `\
 <a href="${this.settings.href}"\
 ${this.targetAttribute}\
 ${this.relAttribute}\
 ${this.classAttribute}\
-${this.titleAttribute}>${this.content}</a>`;
+${this.titleAttribute}>${this.getContent(includeID)}</a>`;
   }
 }
 

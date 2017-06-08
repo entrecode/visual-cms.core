@@ -8,8 +8,8 @@ class Strong extends PhrasingElement {
     ];
   }
 
-  toString() {
-    return `<strong${this.classAttribute}${this.titleAttribute}>${this.content}</strong>`;
+  toString(includeID) {
+    return `<strong${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</strong>`;
   }
 }
 

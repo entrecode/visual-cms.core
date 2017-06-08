@@ -8,8 +8,8 @@ class Code extends PhrasingElement {
     ];
   }
 
-  toString() {
-    return `<code${this.classAttribute}${this.titleAttribute}>${this.content}</code>`;
+  toString(includeID) {
+    return `<code${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</code>`;
   }
 }
 

@@ -21,11 +21,11 @@ class List extends FlowElement {
     };
   }
 
-  toString() {
+  toString(includeID) {
     if (this.settings.ordered) {
-      return `<ol${this.classAttribute}${this.titleAttribute}>${this.content}</ol>`;
+      return `<ol${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</ol>`;
     }
-    return `<ul${this.classAttribute}${this.titleAttribute}>${this.content}</ul>`;
+    return `<ul${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</ul>`;
   }
 }
 

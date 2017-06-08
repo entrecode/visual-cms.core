@@ -10,8 +10,8 @@ class ListElement extends BaseElement {
     ];
   }
 
-  toString() {
-    return `<li${this.classAttribute}${this.titleAttribute}>${this.content}</li>`;
+  toString(includeID) {
+    return `<li${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</li>`;
   }
 }
 

@@ -36,9 +36,9 @@ class Grid extends Module {
     };
   }
 
-  toString() {
+  toString(x) {
     const columns = this.settings.columns.split(',')
-    .map((columnSize, columnNumber) => `<div class="col-${columnSize}">${this.content[`column${columnNumber}`] || ''}</div>`);
+    .map((columnSize, columnNumber) => `<div class="col-${columnSize}">${this.getContent(x)[`column${columnNumber}`] || ''}</div>`);
     return `<div class="grid">${columns.join('')}</div>`;
   }
 }
@@ -82,6 +82,14 @@ describe('simple Elements', () => {
       }
     });
     expect(list.toString()).to.eql('<ol><li>test</li><li>test2</li></ol>');
+    done();
+  });
+  it('nested elements with id in output', (done) => {
+    const text = new core.elements.Text('test');
+    const text1 = new core.elements.Text('test1');
+    const strong = new core.elements.Strong({ content: text });
+    const p = new core.elements.Paragraph({ content: [strong, text1] });
+    expect(p.toStringWithDataID()).to.match(/^<p data-ec-id="[a-f0-9-]+"><strong data-ec-id="[a-f0-9-]+">test<\/strong><span data-ec-id="[a-f0-9-]+">test1<\/span><\/p>$/);
     done();
   });
 });
@@ -475,7 +483,7 @@ describe('base elements', () => {
       ];
       const html = core.parse(json);
       expect(html.map(e => e.toString()).join('')).to.eql(`\
-<a href="https://entrecode.de" class="awesome" title="whaaaat">\
+<a href="https://entrecode.de" title="whaaaat" class="awesome">\
 <img src="https://entreco.de/image.png" alt="simple image" width="200" height="100">\
 </a>`);
       expect(html.map(e => e.toJSON())).to.deep.eql(json);
@@ -500,7 +508,7 @@ describe('base elements', () => {
       ];
       const html = core.parse(json);
       expect(html.map(e => e.toString()).join('')).to.eql(`\
-<div class="awesome" title="whaaaat">\
+<div title="whaaaat" class="awesome">\
 <a href="https://entrecode.de" target="_blank" rel="nofollow">\
 <img src="https://entreco.de/image.png" alt="simple image">\
 </a></div>`);
@@ -537,7 +545,7 @@ describe('base elements', () => {
 <img src="https://entreco.de/image.png" alt="simple image"\
  srcset="https://entreco.de/image-500.png 500w, https://entreco.de/image-800.png 800w, https://entreco.de/image-2x.png 2x"\
  sizes="(min-width: 400px) 800w, 500w"\
- class="awesome" title="whaaaat">`);
+ title="whaaaat" class="awesome">`);
       expect(html.map(e => e.toJSON())).to.deep.eql(json);
       done();
     });
@@ -563,7 +571,7 @@ describe('base elements', () => {
       ];
       const html = core.parse(json);
       expect(html.map(e => e.toString()).join('')).to.eql(`\
-<div class="awesome" title="whaaaat">\
+<div title="whaaaat" class="awesome">\
 <img src="https://entreco.de/image.png" alt="simple image"\
  srcset="https://entreco.de/image-500.png 500w, https://entreco.de/image-800.png 800w, https://entreco.de/image-2x.png 2x"\
 ></div>`);

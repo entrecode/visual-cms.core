@@ -8,8 +8,8 @@ class Quote extends FlowElement {
     ];
   }
 
-  toString() {
-    return `<blockquote${this.classAttribute}${this.titleAttribute}>${this.content}</blockquote>`;
+  toString(includeID) {
+    return `<blockquote${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</blockquote>`;
   }
 }
 

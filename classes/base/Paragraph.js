@@ -8,8 +8,8 @@ class Paragraph extends FlowElement {
     ];
   }
 
-  toString() {
-    return `<p${this.classAttribute}${this.titleAttribute}>${this.content}</p>`;
+  toString(includeID) {
+    return `<p${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</p>`;
   }
 }
 
