@@ -8,7 +8,7 @@ class Superscript extends PhrasingElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<sup${this.classAttribute}${this.titleAttribute}>${this.content}</sup>`;
   }
 }

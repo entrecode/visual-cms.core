@@ -28,7 +28,7 @@ class Headline extends FlowElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<h${this.level}${this.classAttribute}${this.titleAttribute}>\
 ${this.content}</h${this.level}>`;
   }

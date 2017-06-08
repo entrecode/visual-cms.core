@@ -8,7 +8,7 @@ class Paragraph extends FlowElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<p${this.classAttribute}${this.titleAttribute}>${this.content}</p>`;
   }
 }

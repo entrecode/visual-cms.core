@@ -54,7 +54,7 @@ class Link extends PhrasingElement {
     return '';
   }
 
-  get template() {
+  toString() {
     return `\
 <a href="${this.settings.href}"\
 ${this.targetAttribute}\

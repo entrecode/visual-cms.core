@@ -8,7 +8,7 @@ class Subscript extends PhrasingElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<sub${this.classAttribute}${this.titleAttribute}>${this.content}</sub>`;
   }
 }

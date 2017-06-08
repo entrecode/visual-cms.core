@@ -8,7 +8,7 @@ class Strong extends PhrasingElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<strong${this.classAttribute}${this.titleAttribute}>${this.content}</strong>`;
   }
 }

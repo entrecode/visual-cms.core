@@ -8,7 +8,7 @@ class Emphasis extends PhrasingElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<em${this.classAttribute}${this.titleAttribute}>${this.content}</em>`;
   }
 }

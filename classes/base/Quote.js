@@ -8,7 +8,7 @@ class Quote extends FlowElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<blockquote${this.classAttribute}${this.titleAttribute}>${this.content}</blockquote>`;
   }
 }

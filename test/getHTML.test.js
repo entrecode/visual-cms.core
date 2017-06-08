@@ -36,7 +36,7 @@ class Grid extends Module {
     };
   }
 
-  get template() {
+  toString() {
     const columns = this.settings.columns.split(',')
     .map((columnSize, columnNumber) => `<div class="col-${columnSize}">${this.content[`column${columnNumber}`] || ''}</div>`);
     return `<div class="grid">${columns.join('')}</div>`;

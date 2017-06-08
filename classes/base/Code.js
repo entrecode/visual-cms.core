@@ -8,7 +8,7 @@ class Code extends PhrasingElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<code${this.classAttribute}${this.titleAttribute}>${this.content}</code>`;
   }
 }

@@ -10,7 +10,7 @@ class ListElement extends BaseElement {
     ];
   }
 
-  get template() {
+  toString() {
     return `<li${this.classAttribute}${this.titleAttribute}>${this.content}</li>`;
   }
 }

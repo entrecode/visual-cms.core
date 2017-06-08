@@ -21,7 +21,7 @@ class List extends FlowElement {
     };
   }
 
-  get template() {
+  toString() {
     if (this.settings.ordered) {
       return `<ol${this.classAttribute}${this.titleAttribute}>${this.content}</ol>`;
     }

@@ -127,11 +127,11 @@ module.exports = class Element {
   }
 
   get template() {
-    return this.content;
+    return this.toString();
   }
 
   toString() {
-    return this.template;
+    return this.content;
   }
 
   toStringWithDataID() {

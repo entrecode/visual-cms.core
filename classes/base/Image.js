@@ -78,7 +78,7 @@ class Image extends FlowElement {
     return schema;
   }
 
-  get template() {
+  toString() {
     const widthAttribute = this.settings.width ? ` width="${this.settings.width}"` : '';
     const heightAttribute = this.settings.height ? ` height="${this.settings.height}"` : '';
     let srcSet = '';
