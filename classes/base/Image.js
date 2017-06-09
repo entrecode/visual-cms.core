@@ -1,5 +1,11 @@
 const { FlowElement, PhrasingElement, Text } = require('../core');
 
+/**
+ * A HTML `<img>` tag. Subclass of `FlowElement`. Has no content.
+ * Depending on the properties, it is wrapped in an `<a>` tag or even an `<div>`.
+ * It also has settings options for responsive image variants using `src-set`.
+ * @type {Image}
+ */
 class Image extends FlowElement {
 
   get settingsSchema() {

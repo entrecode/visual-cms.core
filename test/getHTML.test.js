@@ -79,7 +79,7 @@ describe('simple Elements', () => {
       content: [listElement1, listElement2],
       settings: {
         ordered: true,
-      }
+      },
     });
     expect(list.toString()).to.eql('<ol><li>test</li><li>test2</li></ol>');
     done();
@@ -102,14 +102,14 @@ describe('parseJSON', () => {
         type: 'strong',
         content: ['strong'],
       },
-      ' sdfsdfsdf'
+      ' sdfsdfsdf',
     ];
     const elements = core.parse(json);
     expect(elements).to.have.lengthOf(3);
     expect(elements[0]).to.be.instanceof(core.elements.Text);
     expect(elements[1]).to.be.instanceof(core.elements.Strong);
     expect(elements[2]).to.be.instanceof(core.elements.Text);
-    expect(elements.map(e => e.toString()).join('')).to.eql('sdfsdfsdf <strong>strong</strong> sdfsdfsdf')
+    expect(elements.map(e => e.toString()).join('')).to.eql('sdfsdfsdf <strong>strong</strong> sdfsdfsdf');
     done();
   });
   it('paragraph with class', (done) => {
@@ -118,7 +118,7 @@ describe('parseJSON', () => {
       {
         type: 'paragraph',
         settings: {
-          class: ['class1', 'class2']
+          class: ['class1', 'class2'],
         },
         content: [
           'text ',
@@ -145,7 +145,7 @@ describe('parseJSON', () => {
       {
         type: 'paragraph',
         settings: {
-          class: ['class1', 'class2']
+          class: ['class1', 'class2'],
         },
         content: [
           'text ',
@@ -180,10 +180,10 @@ describe('parseJSON', () => {
             {
               type: 'strong',
               content: [
-                'li tags'
-              ]
-            }
-          ]
+                'li tags',
+              ],
+            },
+          ],
         },
         {
           type: 'listelement',
@@ -197,17 +197,17 @@ describe('parseJSON', () => {
                 {
                   type: 'listelement',
                   content: [
-                    'or other lists for nesting'
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                    'or other lists for nesting',
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     };
     const html = core.parse(json);
-    expect(html.toString()).to.eql(`<ul><li>Lists can contain list elements which become <strong>li tags</strong></li><li><ol><li>or other lists for nesting</li></ol></li></ul>`)
+    expect(html.toString()).to.eql('<ul><li>Lists can contain list elements which become <strong>li tags</strong></li><li><ol><li>or other lists for nesting</li></ol></li></ul>');
     done();
   });
   it('list toJSON', (done) => {
@@ -224,10 +224,10 @@ describe('parseJSON', () => {
             {
               type: 'strong',
               content: [
-                'li tags'
-              ]
-            }
-          ]
+                'li tags',
+              ],
+            },
+          ],
         },
         {
           type: 'listelement',
@@ -241,14 +241,14 @@ describe('parseJSON', () => {
                 {
                   type: 'listelement',
                   content: [
-                    'or other lists for nesting'
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
+                    'or other lists for nesting',
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
     };
     const html = core.parse(json);
     expect(html.toJSON()).to.deep.eql(json);
@@ -265,9 +265,9 @@ describe('parseJSON', () => {
           class: ['awesome'],
         },
         content: [
-          'The link'
-        ]
-      }
+          'The link',
+        ],
+      },
     ];
     const [html] = core.parse(json);
     expect(html.toString()).to.eql('<a href="https://entrecode.de" target="_blank" rel="nofollow" class="awesome">The link</a>');
@@ -278,7 +278,7 @@ describe('parseJSON', () => {
     const json = {
       type: 'grid',
       settings: {
-        columns: '4,8'
+        columns: '4,8',
       },
       content: {
         column0: [
@@ -288,29 +288,29 @@ describe('parseJSON', () => {
               'First ',
               {
                 type: 'strong',
-                content: 'paragraph!'
-              }
-            ]
+                content: 'paragraph!',
+              },
+            ],
           },
           {
             type: 'paragraph',
-            content: 'Second paragraph!'
+            content: 'Second paragraph!',
           }],
         column1: {
           type: 'paragraph',
-          content: 'just text'
-        }
-      }
+          content: 'just text',
+        },
+      },
     };
     const html = core.parse(json);
-    expect(html.toString()).to.eql(`<div class="grid"><div class="col-4"><p>First <strong>paragraph!</strong></p><p>Second paragraph!</p></div><div class="col-8"><p>just text</p></div></div>`);
+    expect(html.toString()).to.eql('<div class="grid"><div class="col-4"><p>First <strong>paragraph!</strong></p><p>Second paragraph!</p></div><div class="col-8"><p>just text</p></div></div>');
     done();
   });
   it('grid toJSON', (done) => {
     const json = {
       type: 'grid',
       settings: {
-        columns: '4,8'
+        columns: '4,8',
       },
       content: {
         column0: [
@@ -320,19 +320,19 @@ describe('parseJSON', () => {
               'First ',
               {
                 type: 'strong',
-                content: 'paragraph!'
-              }
-            ]
+                content: 'paragraph!',
+              },
+            ],
           },
           {
             type: 'paragraph',
-            content: 'Second paragraph!'
+            content: 'Second paragraph!',
           }],
         column1: {
           type: 'paragraph',
-          content: 'just text'
-        }
-      }
+          content: 'just text',
+        },
+      },
     };
     const html = core.parse(json);
     expect(html.toJSON()).to.deep.eql(json);
@@ -362,7 +362,7 @@ describe('parseJSON', () => {
       type: 'paragraph',
       content: {
         type: 'unknown',
-        content: {}
+        content: {},
       },
     };
     expect(() => core.parse(json)).to.throw(/Class 'unknown' not found/);
@@ -373,7 +373,8 @@ describe('parseJSON', () => {
 describe('base elements', () => {
   it('block', (done) => {
     const json = {
-      type: 'block', content: [
+      type: 'block',
+      content: [
         {
           type: 'paragraph',
           content: [
@@ -387,18 +388,18 @@ describe('base elements', () => {
                 class: ['awesome'],
               },
               content: [
-                'The link'
-              ]
+                'The link',
+              ],
             },
             {
               type: 'code',
-              content: 'lol'
+              content: 'lol',
             },
             {
               type: 'emphasis',
-              content: 'em'
-            }
-          ]
+              content: 'em',
+            },
+          ],
         },
         {
           type: 'headline',
@@ -408,22 +409,22 @@ describe('base elements', () => {
           content: [
             {
               type: 'strong',
-              content: 'strong in head'
+              content: 'strong in head',
             },
             {
               type: 'subscript',
-              content: 'sub'
+              content: 'sub',
             },
             {
               type: 'superscript',
-              content: 'sup'
+              content: 'sup',
             },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     };
     const html = core.parse(json);
-    expect(html.toString()).to.eql(`<div><p>Text. \
+    expect(html.toString()).to.eql('<div><p>Text. \
 <a href="https://entrecode.de" target="_blank" rel="nofollow" class="awesome">The link</a>\
 <code>lol</code>\
 <em>em</em>\
@@ -432,7 +433,7 @@ describe('base elements', () => {
 <strong>strong in head</strong>\
 <sub>sub</sub>\
 <sup>sup</sup>\
-</h2></div>`);
+</h2></div>');
     expect(html.toJSON()).to.deep.eql(json);
     done();
   });
@@ -451,18 +452,18 @@ describe('base elements', () => {
               class: ['awesome'],
             },
             content: [
-              'The link'
-            ]
+              'The link',
+            ],
           },
           {
             type: 'code',
-            content: 'lol'
+            content: 'lol',
           },
           {
             type: 'emphasis',
-            content: 'em'
-          }
-        ]
+            content: 'em',
+          },
+        ],
       },
       {
         type: 'headline',
@@ -472,17 +473,17 @@ describe('base elements', () => {
         content: [
           {
             type: 'strong',
-            content: 'strong in head'
+            content: 'strong in head',
           },
           {
             type: 'subscript',
-            content: 'sub'
+            content: 'sub',
           },
           {
             type: 'superscript',
-            content: 'sup'
+            content: 'sup',
           },
-        ]
+        ],
       },
       {
         type: 'quote',
@@ -493,13 +494,13 @@ describe('base elements', () => {
             settings: {
               href: 'http://entrecode.de',
             },
-            content: 'simple link'
-          }
-        ]
-      }
+            content: 'simple link',
+          },
+        ],
+      },
     ];
     const html = core.parse(json);
-    expect(html.map(e => e.toString()).join('')).to.eql(`<p>Text. \
+    expect(html.map(e => e.toString()).join('')).to.eql('<p>Text. \
 <a href="https://entrecode.de" target="_blank" rel="nofollow" class="awesome">The link</a>\
 <code>lol</code>\
 <em>em</em>\
@@ -509,7 +510,7 @@ describe('base elements', () => {
 <sub>sub</sub>\
 <sup>sup</sup>\
 </h2>\
-<blockquote>cited <a href="http://entrecode.de">simple link</a></blockquote>`);
+<blockquote>cited <a href="http://entrecode.de">simple link</a></blockquote>');
     expect(html.map(e => e.toJSON())).to.deep.eql(json);
     done();
   });
@@ -525,8 +526,8 @@ describe('base elements', () => {
         },
       ];
       const html = core.parse(json);
-      expect(html.map(e => e.toString()).join('')).to.eql(`\
-<img src="https://entreco.de/image.png" alt="simple image">`);
+      expect(html.map(e => e.toString()).join('')).to.eql('\
+<img src="https://entreco.de/image.png" alt="simple image">');
       expect(html.map(e => e.toJSON())).to.deep.eql(json);
       done();
     });
@@ -547,10 +548,10 @@ describe('base elements', () => {
         },
       ];
       const html = core.parse(json);
-      expect(html.map(e => e.toString()).join('')).to.eql(`\
+      expect(html.map(e => e.toString()).join('')).to.eql('\
 <a href="https://entrecode.de" title="whaaaat" class="awesome">\
 <img src="https://entreco.de/image.png" alt="simple image" width="200" height="100">\
-</a>`);
+</a>');
       expect(html.map(e => e.toJSON())).to.deep.eql(json);
       done();
     });
@@ -572,11 +573,11 @@ describe('base elements', () => {
         },
       ];
       const html = core.parse(json);
-      expect(html.map(e => e.toString()).join('')).to.eql(`\
+      expect(html.map(e => e.toString()).join('')).to.eql('\
 <div title="whaaaat" class="awesome">\
 <a href="https://entrecode.de" target="_blank" rel="nofollow">\
 <img src="https://entreco.de/image.png" alt="simple image">\
-</a></div>`);
+</a></div>');
       expect(html.map(e => e.toJSON())).to.deep.eql(json);
       done();
     });
@@ -606,11 +607,11 @@ describe('base elements', () => {
         },
       ];
       const html = core.parse(json);
-      expect(html.map(e => e.toString()).join('')).to.eql(`\
+      expect(html.map(e => e.toString()).join('')).to.eql('\
 <img src="https://entreco.de/image.png" alt="simple image"\
  srcset="https://entreco.de/image-500.png 500w, https://entreco.de/image-800.png 800w, https://entreco.de/image-2x.png 2x"\
  sizes="(min-width: 400px) 800w, 500w"\
- title="whaaaat" class="awesome">`);
+ title="whaaaat" class="awesome">');
       expect(html.map(e => e.toJSON())).to.deep.eql(json);
       done();
     });
@@ -629,27 +630,27 @@ describe('base elements', () => {
                 '500w': 'https://entreco.de/image-500.png',
                 '800w': 'https://entreco.de/image-800.png',
                 '2x': 'https://entreco.de/image-2x.png',
-              }
+              },
             },
           },
         },
       ];
       const html = core.parse(json);
-      expect(html.map(e => e.toString()).join('')).to.eql(`\
+      expect(html.map(e => e.toString()).join('')).to.eql('\
 <div title="whaaaat" class="awesome">\
 <img src="https://entreco.de/image.png" alt="simple image"\
  srcset="https://entreco.de/image-500.png 500w, https://entreco.de/image-800.png 800w, https://entreco.de/image-2x.png 2x"\
-></div>`);
+></div>');
       expect(html.map(e => e.toJSON())).to.deep.eql(json);
       done();
     });
-
   });
 });
 
 describe('find', () => {
   const json = {
-    type: 'block', content: [
+    type: 'block',
+    content: [
       {
         type: 'paragraph',
         content: [
@@ -663,18 +664,18 @@ describe('find', () => {
               class: ['awesome'],
             },
             content: [
-              'The link'
-            ]
+              'The link',
+            ],
           },
           {
             type: 'code',
-            content: 'lol'
+            content: 'lol',
           },
           {
             type: 'emphasis',
-            content: 'em'
-          }
-        ]
+            content: 'em',
+          },
+        ],
       },
       {
         type: 'headline',
@@ -684,25 +685,25 @@ describe('find', () => {
         content: [
           {
             type: 'strong',
-            content: 'strong in head'
+            content: 'strong in head',
           },
           {
             type: 'subscript',
-            content: 'sub'
+            content: 'sub',
           },
           {
             type: 'superscript',
-            content: 'sup'
+            content: 'sup',
           },
-        ]
-      }
-    ]
+        ],
+      },
+    ],
   };
   const json2 =
     {
       type: 'grid',
       settings: {
-        columns: '4,8'
+        columns: '4,8',
       },
       content: {
         column0: [
@@ -712,19 +713,19 @@ describe('find', () => {
               'First ',
               {
                 type: 'strong',
-                content: 'paragraph!'
-              }
-            ]
+                content: 'paragraph!',
+              },
+            ],
           },
           {
             type: 'paragraph',
-            content: 'Second paragraph!'
+            content: 'Second paragraph!',
           }],
         column1: {
           type: 'paragraph',
-          content: 'just text'
-        }
-      }
+          content: 'just text',
+        },
+      },
     };
   const list = [json, json2];
   it('find by content on object', (done) => {

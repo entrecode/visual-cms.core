@@ -1,5 +1,10 @@
 const { PhrasingElement, Text } = require('../core');
 
+/**
+ * A HTML `<a>` tag. Subclass of `PhrasingElement`. Can contain `PhrasingElement`s and `Text`.
+ * `href`, `newTab` and `rel` are settings options.
+ * @type {Link}
+ */
 class Link extends PhrasingElement {
 
   get settingsSchema() {
@@ -59,8 +64,7 @@ class Link extends PhrasingElement {
 <a href="${this.settings.href}"\
 ${this.targetAttribute}\
 ${this.relAttribute}\
-${this.classAttribute}\
-${this.titleAttribute}>${this.getContent(includeID)}</a>`;
+${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</a>`;
   }
 }
 

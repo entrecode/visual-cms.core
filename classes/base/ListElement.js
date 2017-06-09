@@ -1,6 +1,10 @@
 const { BaseElement, PhrasingElement, Text } = require('../core');
 const List = require('./List');
 
+/**
+ * A HTML `<li>` tag. Subclass of `BaseElement`. Can contain `List`, `PhrasingElement`s and `Text`
+ * @type {ListElement}
+ */
 class ListElement extends BaseElement {
   get supportedContent() {
     return [

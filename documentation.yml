@@ -1,0 +1,31 @@
+toc:
+  - Element
+  - Text
+  - BaseElement
+  - PhrasingElement
+  - FlowElement
+  - Module
+  - name: Basic Elements
+    description: |
+      Those elements are pre-defined and can always be used. They map to their HTML pendants:
+  - Link
+  - Code
+  - Emphasis
+  - Strong
+  - Subscript
+  - Superscript
+  - Paragraph
+  - Headline
+  - Image
+  - Quote
+  - List
+  - ListElement
+  - Block
+  - name: API
+  - register
+  - parse
+  - name: Legacy API
+    description: |
+     This part of Visual CMS simply translates HTML to a JSON structure with the same information, and back.
+  - toDOM
+  - toJSON

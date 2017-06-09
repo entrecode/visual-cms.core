@@ -38,7 +38,10 @@ library.set('text', Text);
 });
 
 const abstractTypes = ['baseelement', 'phrasingelement', 'flowelement', 'module'];
-
+/**
+ *
+ * @param elementsToAdd
+ */
 function register(...elementsToAdd) {
   elementsToAdd.forEach((elementClass) => {
     if (!(elementClass.prototype instanceof Element)) {
@@ -54,12 +57,15 @@ function register(...elementsToAdd) {
     library.set(type, elementClass);
   });
 }
-
+/**
+ *
+ * @param json
+ */
 function parse(json) {
   if (Array.isArray(json)) {
     const array = json.map(contentPart => parse(contentPart));
-    array.toString = function toString() {
-      return this.map(element => element.toString()).join('');
+    array.toString = function toString(includeID) {
+      return this.map(element => element.toString(includeID)).join('');
     };
     array.find = function find(fn) {
       return this.reduce((result, element) => result || element.find(fn), false);

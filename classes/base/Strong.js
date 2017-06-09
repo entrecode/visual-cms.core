@@ -1,5 +1,9 @@
 const { PhrasingElement, Text } = require('../core');
 
+/**
+ * A HTML `<strong>` tag. Subclass of `PhrasingElement`. Can contain `PhrasingElement`s and `Text`
+ * @type {Strong}
+ */
 class Strong extends PhrasingElement {
   get supportedContent() {
     return [

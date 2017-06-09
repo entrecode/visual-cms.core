@@ -1,5 +1,9 @@
 const { Module, FlowElement } = require('../core');
 
+/**
+ * The simplest possible `Module`. Simply a `<div>` containing `FlowElement`s.
+ * @type {Block}
+ */
 class Block extends Module {
   get supportedContent() {
     return [

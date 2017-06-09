@@ -1,5 +1,10 @@
 const { FlowElement, PhrasingElement, Text } = require('../core');
 
+/**
+ * A HTML `<h1>`-`<h6>` tag. Level is settable.
+ * Subclass of `FlowElement`. Can contain `PhrasingElement`s and `Text`.
+ * @type {Headline}
+ */
 class Headline extends FlowElement {
 
   get settingsSchema() {
