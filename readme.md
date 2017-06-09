@@ -2,39 +2,11 @@
 
 Visual CMS Core Library. By entrecode.
 
-## Basic WYSIWYG
+## What is Visual CMS?
+In it's simplest form, a way to describe HTML in a JSON structure. It enables a very visual way of editing websites. Actual WYSIWYG, if you want. 
+The [Basic WYSIWYG](#basic-wysiwyg) is just dumb two-way conversion between HTML and a JSON with the same information content. The High Level Visual CMS is much more constrained and only allows specific content. This way, it is also relatively safe against XSS attacks, because you cannot simply add random HTML code by design. 
 
-This part of Visual CMS simply translates HTML to a JSON structure with the same information, and back.
-
-### Usage
-
-```js
-const vcms = require('visual-cms.core');
-
-const json = {
-  type: 'div',
-  attributes: { class: 'myclass' },
-  content: [
-    {
-      type: 'h1',
-      content: [
-        'headline'
-      ],
-    },
-    'a text node',
-  ],
-};
-
-const html = vcms.toDOM(json);
-// Output: <div class="myclass"><h1>headline</h1>a text node</div>
-
-vcms.toJSON(html);
-// Output: json equal to the value of `json` above
-
-```
-### Schema
-
-The Objects need to conform to the JSON Schema in `./schema/visualcms.json`
+**The two APIs are completely parallel and share no code.**
 
 ## High Level Visual CMS
 
@@ -98,47 +70,54 @@ Example:
 
 ```js
 {
-  "type": "list",
-  "settings": {
-    "ordered": false
+  type: 'list',
+  settings: {
+    ordered: false,
   },
-  "content": [
+  content: [
     {
-      "type": "listelement",
-      "content": [
-        "Lists can contain list elements which become ",
+      type: 'listelement',
+      content: [
+        'Lists can contain list elements which become ',
         {
-          "type": "strong",
-          "content": [
-            "li tags"
-          ]
-        }
-      ]
+          type: 'strong',
+          content: [
+            'li tags',
+          ],
+        },
+      ],
     },
     {
-      "type": "list",
-      "settings": {
-        "ordered": true
-      },
-      "content": [
+      type: 'listelement',
+      content: [
         {
-          "type": "listelement",
-          "content": [
-            "or other lists for nesting"
-          ]
-        }
-      ]
-    }
-  ]
+          type: 'list',
+          settings: {
+            ordered: true,
+          },
+          content: [
+            {
+              type: 'listelement',
+              content: [
+                'or other lists for nesting',
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
 }
 ```
 This would render to:
 ```html
 <ul>
   <li>Lists can contain list elements which become <strong>li tags</strong></li>
-  <ol>
-    <li>or other lists for nesting</li>
-  </ol>
+  <li>
+    <ol>
+      <li>or other lists for nesting</li>
+    </ol>
+  </li>
 </ul>
 ```
 
@@ -166,6 +145,7 @@ This is the inheritance tree of the basic Element classes:
         - List (`<ul>`, `<ol>`)
       - ListElement (`<li>`)
     - Module (abstract)
+      - Block (simple ´<div>´)
       - *Your custom module elements*
     
 Wonder why `ListElement` is a direct child of `BaseElement`? 
@@ -176,14 +156,15 @@ Of course, you are also free to create custom Elements that are no modules,
 but inherit from any other Element – e.g. a specialized `ImageWithTitle` Element extending `FlowElement`,
 which renders an HTML like `<div><img src="…"><span class="imgTitle">Description</span></div>`.
 
-The base elements support no additional attributes except `class` (which is defined in 
-`BaseElement` as a settings parameter). If you really need something else, just create a Child element.
+The base elements support no additional attributes except `class` and `title` (which are defined in 
+`BaseElement` as settings parameters). If you really need something else, just create a Child element.
  
 ### Class Documentation
 
 #### Element
 ##### Properties
-
+- id (String, readonly)
+    - every Element has a UUID (v4) as identifier assigned on construction. 
 - type (String, readonly) 
     - the lowercased Class name, and the identifier used in the `type` property
     of the JSON representation. 
@@ -214,11 +195,23 @@ The base elements support no additional attributes except `class` (which is defi
 - supportsContent(content[, property])
     - returns `true`, if the `content` is allowed, `false` otherwise.
     - if `property` is set, it checks `content` to be allowed in the `property` content block.
-- toString()
-    - returns `template`
+- getContent([includeID])
+    - returns the content of an element, rendered as HTML
+    - the optional `includeID` parameter can be used to trigger adding the id as `data-ec-id` html attribute
+- getRootElementAttributes([includeID])
+    - returns the attributes to be added to the outermost element
+    - the optional `includeID` parameter can be used to trigger adding the id as `data-ec-id` html attribute
+- toString([includeID])
+    - returns the HTML representation.
+    - the optional `includeID` parameter can be used to trigger adding the id as `data-ec-id` html attribute
+- toStringWithDataID()
+    - alias for toString(true)
 - toJSON()
     - returns the JSON representation of the object.
-    
+- find(fn)
+    - returns the value of the first element in the element's content subtree that satisfies the provided testing function
+    - if no element is found, false is returned
+
 Most of those properties and classes can safely be overridden in custom Elements.
 
 ### Subclassing
@@ -243,8 +236,8 @@ class MyElement extends Module {
     ];
   }
 
-  get template() {
-    return `<div class="awesome">${this.content}</div>`;
+  toString(includeID) {
+    return `<div data-something="awesome" ${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</div>`;
   }
 }
 
@@ -322,18 +315,19 @@ get settingsSchema() {
   };
 }
 ```
-#### get template()
+#### toString([includeID])
 This finally returns the HTML that is to be rendered from Objects of your Element Class.
-You are free to access `this.settings` and `this.content` to render your favorite HTML module.
+You are free to access `this.settings` and `this.getContent(includeID)` to render your favorite HTML module.
+`this.getRootElementAttributes(includeID)` can be used for adding ids and optionally classes (if extended from BaseElement) to the outermost tag.
 Just make sure you return a string that does not contain `undefined` anywhere.
 It is recommended to use [Template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals).
 Example:
 ```js
-get template() {
+toString(includeID) {
 if (this.settings.ordered) {
-  return `<ol${this.classAttribute}>${this.content}</ol>`;
+  return `<ol${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</ol>`;
 }
-return `<ul${this.classAttribute}>${this.content}</ul>`;
+return `<ul${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</ul>`;
 }
 ```
 
@@ -343,8 +337,44 @@ return `<ul${this.classAttribute}>${this.content}</ul>`;
 This function expects an JSON representation of Visual CMS Element objects, or an
 Array of those objects. It will try to parse them into Element instances (or an 
 Array of instances). It will throw an Error if the used types are not known.
+If you give an Array to parse, you will also get an Array back. Note that `toString()` and `find()` are overwritten on the Array to automatically map to the content elements. This way, you can perform the `toString([includeID])` and `find(cb)` operations on all elements of the array directly.
 
 ### register(...Element)
 Use this function when you created custom Elements. It is necessary to
 register them with the library so they will be recognized.
 
+## Basic WYSIWYG
+
+> **Deprecation notice:** you probably want to use the [High Level Visual CMS](#high-level-visual-cms) instead of this.
+
+This part of Visual CMS simply translates HTML to a JSON structure with the same information, and back.
+
+### Usage
+
+```js
+const vcms = require('visual-cms.core');
+
+const json = {
+  type: 'div',
+  attributes: { class: 'myclass' },
+  content: [
+    {
+      type: 'h1',
+      content: [
+        'headline'
+      ],
+    },
+    'a text node',
+  ],
+};
+
+const html = vcms.toDOM(json);
+// Output: <div class="myclass"><h1>headline</h1>a text node</div>
+
+vcms.toJSON(html);
+// Output: json equal to the value of `json` above
+
+```
+### Schema
+
+The Objects need to conform to the JSON Schema in `./schema/visualcms.json`
