@@ -51,6 +51,13 @@ describe('simple Elements', () => {
     expect(text.template).to.eql('test');
     done();
   });
+  it('paragraph with newlines', (done) => {
+    const text = new core.elements.Text(`line1
+line2`);
+    const p = new core.elements.Paragraph({ content: text });
+    expect(p.template).to.eql('<p>line1<br>line2</p>');
+    done();
+  });
   it('strong', (done) => {
     const text = new core.elements.Text('test');
     const strong = new core.elements.Strong({ content: text });

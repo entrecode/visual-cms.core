@@ -57,6 +57,24 @@ function register(...elementsToAdd) {
     library.set(type, elementClass);
   });
 }
+
+function getClass(type) {
+  const Class = library.get(type);
+  if (!Class) {
+    throw new Error(`Class '${type}' not found`);
+  }
+  return Class;
+}
+
+function jsonToElement(json) {
+  if (json instanceof Element) {
+    return json;
+  }
+  const type = typeof json === 'string' ? 'text' : json.type;
+  const Class = getClass(type);
+  return new Class(json);
+}
+
 /**
  *
  * @param json
@@ -72,28 +90,14 @@ function parse(json) {
     };
     return array;
   }
-  const type = typeof json === 'string' ? 'text' : json.type;
-  const Class = library.get(type);
-  if (!Class) {
-    throw new Error(`Class '${type}' not found`);
-  }
-  return new Class(json);
+  return jsonToElement(json);
 }
 
-function jsonToElement(json) {
-  if (json instanceof Element) {
-    return json;
-  }
-  const type = typeof json === 'string' ? 'text' : json.type;
-  const Class = library.get(type);
-  if (!Class) {
-    throw new Error(`Class '${type}' not found`);
-  }
-  return new Class(json);
-}
+
 
 module.exports = {
   register,
   parse,
   jsonToElement,
+  getClass,
 };

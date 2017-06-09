@@ -13,7 +13,7 @@ class Text extends Element {
   }
 
   get content() {
-    return this[contentSymbol];
+    return this[contentSymbol].replace(/(?:\r\n|\r|\n)/g, '<br>');
   }
 
   /**
