@@ -109,6 +109,23 @@ module.exports = class Element {
     return this.toString();
   }
 
+  find(fn) {
+    if (typeof this.content === 'string') {
+      return false; // break case 1: we are at a leaf node (simple text)
+    }
+    if (this.content instanceof Element) {
+      return this.content.find(fn); // break case 2: we have a single Element, call Element.find
+    }
+    let iterableChildren = this.content;
+    if (!Array.isArray(this.content)) { // if content is an object, we need to flatten it
+      iterableChildren = Object.keys(this.content)
+      .map(key => this.content[key])
+      .reduce((a, b) => a.concat(b));
+    }
+    return iterableChildren.find(fn) || iterableChildren // call Array.find on children array
+      .reduce((found, child) => found || child.find(fn), false); // call Element.find on children
+  }
+
   getContent(includeID) {
     if (!this[contentSymbol]) {
       return '';

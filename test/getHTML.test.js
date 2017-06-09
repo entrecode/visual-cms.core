@@ -372,54 +372,56 @@ describe('parseJSON', () => {
 
 describe('base elements', () => {
   it('block', (done) => {
-    const json = { type: 'block', content: [
-      {
-        type: 'paragraph',
-        content: [
-          'Text. ',
-          {
-            type: 'link',
-            settings: {
-              href: 'https://entrecode.de',
-              newTab: true,
-              rel: ['nofollow'],
-              class: ['awesome'],
+    const json = {
+      type: 'block', content: [
+        {
+          type: 'paragraph',
+          content: [
+            'Text. ',
+            {
+              type: 'link',
+              settings: {
+                href: 'https://entrecode.de',
+                newTab: true,
+                rel: ['nofollow'],
+                class: ['awesome'],
+              },
+              content: [
+                'The link'
+              ]
             },
-            content: [
-              'The link'
-            ]
-          },
-          {
-            type: 'code',
-            content: 'lol'
-          },
-          {
-            type: 'emphasis',
-            content: 'em'
-          }
-        ]
-      },
-      {
-        type: 'headline',
-        settings: {
-          level: 2,
+            {
+              type: 'code',
+              content: 'lol'
+            },
+            {
+              type: 'emphasis',
+              content: 'em'
+            }
+          ]
         },
-        content: [
-          {
-            type: 'strong',
-            content: 'strong in head'
+        {
+          type: 'headline',
+          settings: {
+            level: 2,
           },
-          {
-            type: 'subscript',
-            content: 'sub'
-          },
-          {
-            type: 'superscript',
-            content: 'sup'
-          },
-        ]
-      }
-    ]};
+          content: [
+            {
+              type: 'strong',
+              content: 'strong in head'
+            },
+            {
+              type: 'subscript',
+              content: 'sub'
+            },
+            {
+              type: 'superscript',
+              content: 'sup'
+            },
+          ]
+        }
+      ]
+    };
     const html = core.parse(json);
     expect(html.toString()).to.eql(`<div><p>Text. \
 <a href="https://entrecode.de" target="_blank" rel="nofollow" class="awesome">The link</a>\
@@ -642,5 +644,141 @@ describe('base elements', () => {
       done();
     });
 
+  });
+});
+
+describe('find', () => {
+  const json = {
+    type: 'block', content: [
+      {
+        type: 'paragraph',
+        content: [
+          'Text. ',
+          {
+            type: 'link',
+            settings: {
+              href: 'https://entrecode.de',
+              newTab: true,
+              rel: ['nofollow'],
+              class: ['awesome'],
+            },
+            content: [
+              'The link'
+            ]
+          },
+          {
+            type: 'code',
+            content: 'lol'
+          },
+          {
+            type: 'emphasis',
+            content: 'em'
+          }
+        ]
+      },
+      {
+        type: 'headline',
+        settings: {
+          level: 2,
+        },
+        content: [
+          {
+            type: 'strong',
+            content: 'strong in head'
+          },
+          {
+            type: 'subscript',
+            content: 'sub'
+          },
+          {
+            type: 'superscript',
+            content: 'sup'
+          },
+        ]
+      }
+    ]
+  };
+  const json2 =
+    {
+      type: 'grid',
+      settings: {
+        columns: '4,8'
+      },
+      content: {
+        column0: [
+          {
+            type: 'paragraph',
+            content: [
+              'First ',
+              {
+                type: 'strong',
+                content: 'paragraph!'
+              }
+            ]
+          },
+          {
+            type: 'paragraph',
+            content: 'Second paragraph!'
+          }],
+        column1: {
+          type: 'paragraph',
+          content: 'just text'
+        }
+      }
+    };
+  const list = [json, json2];
+  it('find by content on object', (done) => {
+    const ecvc = core.parse(json);
+    const found = ecvc.find(el => el.content.toString() === 'sub');
+    expect(found, 'did not find object').to.be.ok;
+    expect(found.type).to.eql('subscript');
+    done();
+  });
+  it('find by content on array', (done) => {
+    const ecvc = core.parse(list);
+    const found = ecvc.find(el => el.content.toString() === 'sub');
+    expect(found, 'did not find object').to.be.ok;
+    expect(found.type).to.eql('subscript');
+    done();
+  });
+  it('find by type on object', (done) => {
+    const ecvc = core.parse(json);
+    const found = ecvc.find(el => el.type === 'emphasis');
+    expect(found, 'did not find object').to.be.ok;
+    expect(found.content.toString()).to.eql('em');
+    done();
+  });
+  it('find by type on array', (done) => {
+    const ecvc = core.parse(list);
+    const found = ecvc.find(el => el.type === 'emphasis');
+    expect(found, 'did not find object').to.be.ok;
+    expect(found.content.toString()).to.eql('em');
+    done();
+  });
+  it('no match on object', (done) => {
+    const ecvc = core.parse(json);
+    const found = ecvc.find(el => el.type === 'emfphasis');
+    expect(found, 'did find object').to.be.false;
+    done();
+  });
+  it('no match on array', (done) => {
+    const ecvc = core.parse(list);
+    const found = ecvc.find(el => el.type === 'emfphasis');
+    expect(found, 'did find object').to.be.false;
+    done();
+  });
+  it('find in subtree with object-type contents on object', (done) => {
+    const ecvc = core.parse(json2);
+    const found = ecvc.find(el => el.content.toString() === 'Second paragraph!');
+    expect(found, 'did not find object').to.be.ok;
+    expect(found.type).to.eql('paragraph');
+    done();
+  });
+  it('find in subtree with object-type contents on array', (done) => {
+    const ecvc = core.parse(list);
+    const found = ecvc.find(el => el.content.toString() === 'Second paragraph!');
+    expect(found, 'did not find object').to.be.ok;
+    expect(found.type).to.eql('paragraph');
+    done();
   });
 });

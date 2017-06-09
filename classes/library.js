@@ -61,6 +61,9 @@ function parse(json) {
     array.toString = function toString() {
       return this.map(element => element.toString()).join('');
     };
+    array.find = function find(fn) {
+      return this.reduce((result, element) => result || element.find(fn), false);
+    };
     return array;
   }
   const type = typeof json === 'string' ? 'text' : json.type;
