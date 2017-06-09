@@ -3,6 +3,12 @@ const { PhrasingElement, Text } = require('../core');
 /**
  * A HTML `<sub>` tag. Subclass of `PhrasingElement`. Can contain `PhrasingElement`s and `Text`
  * @type {Subscript}
+ * @example
+ * new Subscript({
+ *   content: 'smaller'
+ * });
+ * @example <caption>Resulting HTML:</caption>
+ * <sub>smaller</sub>
  */
 class Subscript extends PhrasingElement {
   get supportedContent() {

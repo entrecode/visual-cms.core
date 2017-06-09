@@ -5,6 +5,69 @@ const { FlowElement, PhrasingElement, Text } = require('../core');
  * Depending on the properties, it is wrapped in an `<a>` tag or even an `<div>`.
  * It also has settings options for responsive image variants using `src-set`.
  * @type {Image}
+ * @example <caption>Simple Image:</caption>
+ * new Image({
+ *   settings: {
+ *     src: 'https://example.com/image.jpg',
+ *     alt: 'The alt attribute is always required',
+ *     title: 'The title attribute is inferred from BaseElement',
+ *     width: 100, // width and height are optional
+ *     height: 200,
+ *   }
+ * });
+ * @example <caption>Resulting HTML (`alt` and `title` values omitted for brevity):</caption>
+ * <img src="https://example.com/image.jpg" alt="…" title="…" width="100" height="200">
+ * @example <caption>Responsive Image:</caption>
+ * new Image({
+ *   settings: {
+ *     src: 'https://entreco.de/image.png',
+ *     alt: 'simple image',
+ *     class: ['awesome'],
+ *     title: 'whaaaat',
+ *     responsive: {
+ *       srcs: {
+ *         '500w': 'https://entreco.de/image-500.png',
+ *         '800w': 'https://entreco.de/image-800.png',
+ *         '2x': 'https://entreco.de/image-2x.png',
+ *       },
+ *       sizes: {
+ *         default: '500w',
+ *         '(min-width: 400px)': '800w',
+ *       },
+ *     },
+ *   },
+ * });
+ * @example <caption>Resulting HTML:</caption>
+ * <img src="https://entreco.de/image.png" alt="simple image"
+ * srcset="https://entreco.de/image-500.png 500w, https://entreco.de/image-800.png 800w, https://entreco.de/image-2x.png 2x"
+ * sizes="(min-width: 400px) 800w, 500w"
+ * title="whaaaat" class="awesome">
+ * @example <caption>Image with Link:</caption>
+ * new Image({
+ *   settings: {
+ *     src: 'https://example.com/image.jpg',
+ *     alt: 'The alt attribute is always required',
+ *     title: 'The title attribute is inferred from BaseElement',
+ *     href: 'https://entrecode.de',
+ *     rel: ['nofollow'],
+ *     newTab: true,
+ *   }
+ * });
+ * @example <caption>Resulting HTML (`alt` and `title` values omitted for brevity):</caption>
+ * <a href="https://entrecode.de" target="_blank" rel="nofollow">
+ *   <img src="https://example.com/image.jpg" alt="…" title="…">
+ * </a>
+ * @example <caption>Wrapped Image:</caption>
+ * new Image({
+ *   settings: {
+ *     src: 'https://example.com/image.jpg',
+ *     alt: 'description',
+ *     class: ['awesome'],
+ *     wrap: true,
+ *   }
+ * });
+ * @example <caption>Resulting HTML (note that the `class` attribute is rendered on the outermost element):</caption>
+ * <div class="awesome"><img src="https://example.com/image.jpg" alt="description"></div>
  */
 class Image extends FlowElement {
 

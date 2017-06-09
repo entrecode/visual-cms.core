@@ -4,6 +4,17 @@ const { PhrasingElement, Text } = require('../core');
  * A HTML `<a>` tag. Subclass of `PhrasingElement`. Can contain `PhrasingElement`s and `Text`.
  * `href`, `newTab` and `rel` are settings options.
  * @type {Link}
+ * @example
+ * new Link({
+ *   settings: {
+ *     href: 'https://example.com',
+ *     newTab: true,
+ *     rel: ['nofollow'],
+ *   },
+ *   content: 'Link Text'
+ * });
+ * @example <caption>Resulting HTML:</caption>
+ * <a href="https://example.com" target="_blank" rel="nofollow">Link Text</a>
  */
 class Link extends PhrasingElement {
 

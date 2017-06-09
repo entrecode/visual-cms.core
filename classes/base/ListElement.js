@@ -4,6 +4,12 @@ const List = require('./List');
 /**
  * A HTML `<li>` tag. Subclass of `BaseElement`. Can contain `List`, `PhrasingElement`s and `Text`
  * @type {ListElement}
+ * @example
+ * new ListElement({
+ *   content: 'Text'
+ * });
+ * @example <caption>Resulting HTML:</caption>
+ * <li>Text</li>
  */
 class ListElement extends BaseElement {
   get supportedContent() {

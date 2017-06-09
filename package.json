@@ -8,7 +8,8 @@
   },
   "scripts": {
     "coverage": "NODE_ENV=testing istanbul cover _mocha -- --recursive -R dot && open ./coverage/lcov-report/index.html",
-    "servedoc": "documentation serve --config documentation.yml"
+    "servedoc": "documentation serve --config documentation.yml",
+    "builddoc": "documentation build --config documentation.yml -o ./docs -f html"
   },
   "repository": {
     "type": "git",

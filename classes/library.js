@@ -39,8 +39,9 @@ library.set('text', Text);
 
 const abstractTypes = ['baseelement', 'phrasingelement', 'flowelement', 'module'];
 /**
- *
- * @param elementsToAdd
+ * Register a new Element Class for usage with Visual CMS.
+ * @name vcms.register
+ * @param {...Class} elementsToAdd Subclasses of Element to register
  */
 function register(...elementsToAdd) {
   elementsToAdd.forEach((elementClass) => {
@@ -58,6 +59,13 @@ function register(...elementsToAdd) {
   });
 }
 
+/**
+ * Return the correct class for a type identifier string
+ * @name vcms.getClass
+ * @param {string} type The type of the element to get, e.g. `paragraph`;
+ * @returns {Class} the Class
+ * @throws Error when the class is not found / not registered yet.
+ */
 function getClass(type) {
   const Class = library.get(type);
   if (!Class) {
@@ -76,8 +84,11 @@ function jsonToElement(json) {
 }
 
 /**
- *
- * @param json
+ * Parse a Visual-CMS JSON into Visual-CMS Objects
+ * @name vcms.parse
+ * @param {JSON} json a valid JSON to parse
+ * @returns {(Element|Array<Element>)} Element or List of Elements
+ * @throws Error when unknown types are used.
  */
 function parse(json) {
   if (Array.isArray(json)) {

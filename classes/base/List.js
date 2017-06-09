@@ -4,6 +4,19 @@ const { FlowElement } = require('../core');
  * A HTML `<ul>` or `<ol>` tag. Subclass of `FlowElement`. Can contain `PhrasingElement`s and `Text`.
  * Has the settings property `ordered` that defines if `<ul>` or `<ol>`.
  * @type {List}
+ * @example
+ * new List({
+ *   settings: {
+ *     ordered: false,
+ *   },
+ *   content: [
+ *     new ListElement({content: 'Text'}),
+ *   ],
+ * });
+ * @example <caption>Resulting HTML:</caption>
+ * <ul>
+ *   <li>Text</li>
+ * </ul>
  */
 class List extends FlowElement {
   get supportedContent() {

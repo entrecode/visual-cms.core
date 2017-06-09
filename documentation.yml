@@ -1,13 +1,23 @@
 toc:
+  - name: API
+    description: |
+      This is the API documentation of the Visual CMS module.
+  - vcms
+  - vcms.register
+  - vcms.getClass
+  - vcms.parse
+  - vcms.elements
+  - name: Classes
+    description: |
+      The logic of Visual CMS is based around Classes with heavy inheritance. The base class,
+      `Element`, contains most of the logic. The other Elements are all subclasses of `Element`
+      and overwrite stuff where needed.
   - Element
   - Text
   - BaseElement
   - PhrasingElement
   - FlowElement
   - Module
-  - name: Basic Elements
-    description: |
-      Those elements are pre-defined and can always be used. They map to their HTML pendants:
   - Link
   - Code
   - Emphasis
@@ -21,11 +31,8 @@ toc:
   - List
   - ListElement
   - Block
-  - name: API
-  - register
-  - parse
   - name: Legacy API
     description: |
-     This part of Visual CMS simply translates HTML to a JSON structure with the same information, and back.
+      This part of Visual CMS simply translates HTML to a JSON structure with the same information, and back.
   - toDOM
   - toJSON
