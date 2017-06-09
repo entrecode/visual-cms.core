@@ -89,7 +89,7 @@ describe('simple Elements', () => {
     const text1 = new core.elements.Text('test1');
     const strong = new core.elements.Strong({ content: text });
     const p = new core.elements.Paragraph({ content: [strong, text1] });
-    expect(p.toStringWithDataID()).to.match(/^<p data-ec-id="[a-f0-9-]+"><strong data-ec-id="[a-f0-9-]+">test<\/strong>test1<\/p>$/);
+    expect(p.toStringWithDataID()).to.match(/^<p data-ec-id="[a-f0-9-]+"><strong data-ec-id="[a-f0-9-]+">test<\/strong><span data-ec-id="[a-f0-9-]+">test1<\/span><\/p>$/);
     done();
   });
 });

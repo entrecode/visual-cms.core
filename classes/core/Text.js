@@ -22,10 +22,6 @@ class Text extends Element {
     this[contentSymbol] = content;
   }
 
-  toString() {
-    return this.content;
-  }
-
   toJSON() {
     return this.content;
   }
