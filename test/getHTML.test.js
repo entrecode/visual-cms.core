@@ -728,6 +728,27 @@ describe('find', () => {
       },
     };
   const list = [json, json2];
+  const list2 = [
+    'parent',
+    {
+      type: 'paragraph',
+      id: 'fdae304f-724d-4fe6-adfb-e5c84f4b34d0',
+      settings: {
+        class: ['class1', 'class2']
+      },
+      content: [
+        'child',
+        {
+          type: 'strong',
+          settings: {
+            class: ['extrastrong'],
+          },
+          content: 'grandchild',
+        },
+        'toy'
+      ],
+    }
+  ];
   it('find by content on object', (done) => {
     const ecvc = core.parse(json);
     const found = ecvc.find(el => el.content.toString() === 'sub');
@@ -778,6 +799,15 @@ describe('find', () => {
   it('find in subtree with object-type contents on array', (done) => {
     const ecvc = core.parse(list);
     const found = ecvc.find(el => el.content.toString() === 'Second paragraph!');
+    expect(found, 'did not find object').to.be.ok;
+    expect(found.type).to.eql('paragraph');
+    done();
+  });
+
+  it('find in top level', (done) => {
+    const ecvc = core.parse(list2);
+    const id = ecvc[1].id;
+    const found = ecvc.find(node => node.id === id);
     expect(found, 'did not find object').to.be.ok;
     expect(found.type).to.eql('paragraph');
     done();

@@ -177,6 +177,9 @@ module.exports = class Element {
    * @returns {(Element|boolean)}
    */
   find(fn) {
+    if (fn(this)) { // break case 0: we are the element itself
+      return this;
+    }
     if (typeof this.content === 'string') {
       return false; // break case 1: we are at a leaf node (simple text)
     }
