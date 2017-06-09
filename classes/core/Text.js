@@ -1,3 +1,5 @@
+const he = require('he');
+
 const Element = require('./Element');
 const { contentSymbol } = require('./symbols');
 
@@ -13,7 +15,7 @@ class Text extends Element {
   }
 
   get content() {
-    return this[contentSymbol].replace(/(?:\r\n|\r|\n)/g, '<br>');
+    return he.encode(this[contentSymbol]).replace(/(?:\r\n|\r|\n)/g, '<br>');
   }
 
   /**

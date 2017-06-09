@@ -53,9 +53,9 @@ describe('simple Elements', () => {
   });
   it('paragraph with newlines', (done) => {
     const text = new core.elements.Text(`line1
-line2`);
+line2<br>`);
     const p = new core.elements.Paragraph({ content: text });
-    expect(p.template).to.eql('<p>line1<br>line2</p>');
+    expect(p.template).to.eql('<p>line1<br>line2&#x3C;br&#x3E;</p>');
     done();
   });
   it('strong', (done) => {
