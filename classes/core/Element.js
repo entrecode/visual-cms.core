@@ -225,7 +225,7 @@ module.exports = class Element {
         })
       );
     }
-    return this[contentSymbol].content;
+    return this[contentSymbol].toString(includeID);
   }
 
   /**
@@ -250,7 +250,7 @@ module.exports = class Element {
    */
   toString(includeID) {
     if (includeID) {
-      return `<span${this.getRootElementAttributes(includeID)}>${this.getContent()}</span>`;
+      return `<span${this.getRootElementAttributes(includeID)}>${this.getContent(includeID)}</span>`;
     }
     return this.content;
   }

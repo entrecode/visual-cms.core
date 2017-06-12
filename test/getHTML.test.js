@@ -67,7 +67,7 @@ line2<br>`);
   it('strong with id in output', (done) => {
     const text = new core.elements.Text('test');
     const strong = new core.elements.Strong({ content: text });
-    expect(strong.toStringWithDataID()).to.match(/^<strong data-ec-id="[a-f0-9-]+">test<\/strong>$/);
+    expect(strong.toStringWithDataID()).to.match(/^<strong data-ec-id="[a-f0-9-]+"><span data-ec-id="[a-f0-9-]+">test<\/span><\/strong>$/);
     done();
   });
   it('strong with array of content', (done) => {
@@ -75,6 +75,37 @@ line2<br>`);
     const text1 = new core.elements.Text('test2');
     const strong = new core.elements.Strong({ content: [text, text1] });
     expect(strong.template).to.eql('<strong>testtest2</strong>');
+    done();
+  });
+  it('with id but no array in content', (done) => {
+    const x = {
+      type: 'block',
+      content: [
+        {
+          type: 'paragraph',
+          content: 'parent...?'
+        },
+        {
+          type: 'paragraph',
+          settings: {
+            class: ['class1', 'class2']
+          },
+          content: [
+            'child',
+            {
+              type: 'strong',
+              settings: {
+                class: ['extrastrong'],
+              },
+              content: 'grandchild',
+            },
+            'toy\n'
+          ],
+        }
+      ]
+    };
+    const y = core.parse(x).toStringWithDataID();
+    expect(y).to.match(/^<div data-ec-id="[a-f0-9-]+"><p data-ec-id="[a-f0-9-]+"><span data-ec-id="[a-f0-9-]+">parent\.\.\.\?<\/span><\/p><p data-ec-id="[a-f0-9-]+" class="class1 class2"><span data-ec-id="[a-f0-9-]+">child<\/span><strong data-ec-id="[a-f0-9-]+" class="extrastrong"><span data-ec-id="[a-f0-9-]+">grandchild<\/span><\/strong><span data-ec-id="[a-f0-9-]+">toy\n<\/span><\/p><\/div>$/)
     done();
   });
   it('list', (done) => {
@@ -96,7 +127,7 @@ line2<br>`);
     const text1 = new core.elements.Text('test1');
     const strong = new core.elements.Strong({ content: text });
     const p = new core.elements.Paragraph({ content: [strong, text1] });
-    expect(p.toStringWithDataID()).to.match(/^<p data-ec-id="[a-f0-9-]+"><strong data-ec-id="[a-f0-9-]+">test<\/strong><span data-ec-id="[a-f0-9-]+">test1<\/span><\/p>$/);
+    expect(p.toStringWithDataID()).to.match(/^<p data-ec-id="[a-f0-9-]+"><strong data-ec-id="[a-f0-9-]+"><span data-ec-id="[a-f0-9-]+">test<\/span><\/strong><span data-ec-id="[a-f0-9-]+">test1<\/span><\/p>$/);
     done();
   });
 });
